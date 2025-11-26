@@ -1,0 +1,95 @@
+// components/FloatingTeamsButton.module.scss
+.floatingBtn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+
+  // Flexbox for icon and text alignment
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.95rem 2rem;
+  border-radius: 50px;
+
+  font-weight: 700;
+  color: #000 !important;
+  text-decoration: none;
+  letter-spacing: 0.4px;
+
+  background: linear-gradient(
+    90deg,
+    #ff7a00,
+    #ff0080,
+    #0084ff
+  );
+  background-size: 300% 300%;
+  animation: btnGradientFlow 6s ease infinite;
+
+  box-shadow:
+    0 0 22px rgba(255, 122, 0, 0.55),
+    0 0 38px rgba(255, 0, 128, 0.35),
+    0 0 54px rgba(0, 132, 255, 0.35);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(6px);
+
+  transition: transform 0.35s ease, box-shadow 0.4s ease;
+
+  // Reset button styles
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+
+  &:hover {
+    transform: translateY(-6px) scale(1.07);
+    color: #000 !important;
+
+    box-shadow:
+      0 0 28px rgba(255, 122, 0, 0.7),
+      0 0 46px rgba(255, 0, 128, 0.45),
+      0 0 70px rgba(0, 132, 255, 0.55);
+  }
+
+  &:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+  }
+
+  // Ensure SVG icon inherits colors properly
+  svg {
+    flex-shrink: 0;
+  }
+
+  span {
+    margin-left: 8px;
+  }
+}
+
+@keyframes btnGradientFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .floatingBtn {
+    bottom: 20px;
+    right: 20px;
+    padding: 0.8rem 1.5rem;
+    font-size: 13px;
+    
+    span {
+      display: none;
+    }
+    
+    svg {
+      margin-right: 0;
+      width: 24px;
+      height: 24px;
+    }
+  }
+}

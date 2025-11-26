@@ -1,0 +1,199 @@
+@use "@/styles/mixins" as *;
+
+/* ------------------------------------------
+   SECTION WRAPPER
+------------------------------------------- */
+.section {
+  padding: 5rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  /* MATCH EXACT SAME BACKGROUND AS ApiPartners */
+  background: linear-gradient(180deg, #05030A 0%, #07091A 50%, #05030A 100%);
+}
+
+/* ------------------------------------------
+   PARTICLE FIELD (Sass-safe version)
+------------------------------------------- */
+.bgParticles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: rgba(var(--neon-a), 0.8);
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.85;
+
+  /* SAFE CALC — NO modulus */
+  left: calc(var(--i) * 9%);
+  top: calc(var(--i) * 5%);
+
+  animation: floatParticle 14s linear infinite;
+}
+
+.particle:nth-child(even) {
+  background: rgba(var(--neon-b), 0.9);
+  animation-duration: 18s;
+}
+.particle:nth-child(odd) {
+  background: rgba(var(--neon-c), 0.9);
+  animation-duration: 22s;
+}
+
+@keyframes floatParticle {
+  0% { transform: translateY(0); opacity: 0.4; }
+  100% { transform: translateY(-120vh); opacity: 1; }
+}
+
+/* ------------------------------------------
+   NEON STRIP
+------------------------------------------- */
+.stripWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+  margin-bottom: 1.8rem;
+  position: relative;
+  z-index: 10;
+}
+
+.neonStrip {
+  @include neon-strip(52px);
+
+  width: 100%;
+  max-width: 1400px;
+  text-align: center;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: #0a0101d8;
+  overflow: hidden;
+  border-radius: 12px;
+  position: relative;
+  z-index: 10;
+
+  /* Extra hologram beam (reinforced) */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -130%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255,255,255,0.55),
+      transparent
+    );
+    filter: blur(14px);
+    opacity: 0.45;
+    animation: stripSweep 4.6s infinite ease-in-out;
+  }
+}
+
+@keyframes stripSweep {
+  0%   { left: -130%; }
+  55%  { left: 150%; }
+  100% { left: -130%; }
+}
+/* ------------------------------------------
+   TITLE + SUBTEXT
+------------------------------------------- */
+.sectionTitle {
+  font-size: 1.9rem;
+  font-weight: 800;
+  text-align: center;
+  margin-top: 1.2rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #FF7A00, #FF3B30, #0084FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  z-index: 8;
+}
+
+.subText {
+  font-size: 1.15rem;
+  color: #b7c3d6;
+  margin-bottom: 3.2rem;
+}
+
+/* ------------------------------------------
+   TICKER WRAP
+------------------------------------------- */
+.tickerWrap {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 3;
+}
+
+.track {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  will-change: transform;
+}
+
+/* ------------------------------------------
+   LOGO CARD w/ HOLOGRAM
+------------------------------------------- */
+.logoCard {
+  position: relative;
+  padding: 1.1rem 1.8rem;
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    0 0 22px rgba(var(--neon-a),0.25),
+    inset 0 0 12px rgba(var(--neon-b),0.15);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-style: preserve-3d;
+}
+
+.logo {
+  height: 60px;
+  filter: drop-shadow(0 0 10px rgba(var(--neon-a),0.4));
+}
+
+.name {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  color: #e9e9e9;
+}
+
+.holo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    130deg,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
+
+  opacity: 0;
+  transform: translateX(-80%);
+  transition: 0.45s ease;
+  pointer-events: none;
+}
+
+.logoCard:hover .holo {
+  opacity: 0.55;
+  transform: translateX(80%);
+}

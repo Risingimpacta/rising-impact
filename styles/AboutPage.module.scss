@@ -1,0 +1,493 @@
+@use "@/styles/mixins" as *;
+
+/* -----------------------------------------------------
+   PAGE WRAPPER — Deep Cinematic Gradient
+----------------------------------------------------- */
+.aboutPage {
+  background: radial-gradient(circle at 40% 20%, rgba(var(--neon-a),0.12), transparent 60%),
+              linear-gradient(180deg, #05030A, #07091A 55%, #05030A);
+  color: #fff;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* -----------------------------------------------------
+   GLOBAL PARTICLE FIELD (light hologram dust)
+----------------------------------------------------- */
+.aboutPage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(var(--neon-a),0.5), transparent),
+    radial-gradient(2px 2px at 80% 60%, rgba(var(--neon-b),0.5), transparent),
+    radial-gradient(2px 2px at 60% 80%, rgba(var(--neon-c),0.5), transparent);
+  opacity: 0.35;
+  pointer-events: none;
+  animation: starFloat 16s linear infinite;
+}
+
+@keyframes starFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-80px); }
+}
+
+/* -----------------------------------------------------
+   HERO SECTION — MAX NEON LIKE DEMOS PAGE
+----------------------------------------------------- */
+.hero {
+  padding: 8rem 2rem 6rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  background: linear-gradient(
+    135deg,
+    rgba(var(--neon-a),0.12),
+    rgba(var(--neon-b),0.05),
+    rgba(var(--neon-c),0.12)
+  );
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('/grid-pattern.svg') center/cover;
+    opacity: 0.12;
+    pointer-events: none;
+  }
+}
+
+/* NEON STRIP — same as Demos/API */
+.neonStrip {
+  @include neon-strip(52px);
+  margin-bottom: 2rem;
+  position: relative;
+  text-align: center;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -130%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255,255,255,0.6),
+      transparent
+    );
+    filter: blur(14px);
+    opacity: 0.45;
+    animation: stripSweep 4.6s infinite ease-in-out;
+  }
+}
+
+@keyframes stripSweep {
+  0% { left: -130%; }
+  55% { left: 150%; }
+  100% { left: -130%; }
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+}
+
+.gradientText {
+  @include gradient-text(rgba(var(--neon-a),1), rgba(var(--neon-b),1));
+}
+
+.heroSubtitle {
+  font-size: 1.3rem;
+  color: #9fb0c8;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+/* -----------------------------------------------------
+   STATS SECTION — Neon Glass Cards
+----------------------------------------------------- */
+.stats {
+  padding: 4rem 2rem;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.statCard {
+  text-align: center;
+  padding: 2.2rem 1rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.07);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 0 25px rgba(var(--neon-a),0.18);
+  transition: all 0.35s var(--ease-pop);
+
+  &:hover {
+    transform: translateY(-8px) scale(1.03);
+    border-color: rgba(var(--neon-a),0.25);
+    box-shadow: 0 0 40px rgba(var(--neon-a),0.45);
+  }
+}
+
+.statNumber {
+  font-size: 3.2rem;
+  font-weight: 900;
+  @include gradient-text(#FF7A00, #0084FF);
+  margin-bottom: 0.4rem;
+}
+
+.statLabel {
+  color: #9fb0c8;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* -----------------------------------------------------
+   TABS — Hologram Buttons
+----------------------------------------------------- */
+.missionSection {
+  padding: 6rem 2rem;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  padding: 1rem 2.2rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  color: #9fb0c8;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.35s var(--ease-pop);
+  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+
+  &:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    transform: translateY(-3px);
+  }
+
+  &.active {
+    background: linear-gradient(90deg, rgba(var(--neon-a),0.25), rgba(var(--neon-b),0.25));
+    border-color: rgba(var(--neon-a),0.5);
+    color: #fff;
+    box-shadow: 0 0 22px rgba(var(--neon-a),0.35);
+  }
+}
+
+/* -----------------------------------------------------
+   TAB CONTENT (Glass Box)
+----------------------------------------------------- */
+.tabContent {
+  background: rgba(255,255,255,0.04);
+  border-radius: 20px;
+  padding: 3rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 0 24px rgba(var(--neon-b),0.15);
+  backdrop-filter: blur(14px);
+}
+
+/* HEADINGS */
+.content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  @include gradient-text(#FF7A00, #0084FF);
+}
+
+/* -----------------------------------------------------
+   MISSION POINTS — 3D Neon Cards
+----------------------------------------------------- */
+.missionPoints {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.point {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.7rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 0 12px rgba(var(--neon-a),0.18);
+  transition: 0.3s;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 34px rgba(var(--neon-a),0.38);
+  }
+}
+
+.pointIcon {
+  font-size: 2.3rem;
+}
+
+.pointText strong {
+  color: #fff;
+}
+
+/* -----------------------------------------------------
+   VISION LIST
+----------------------------------------------------- */
+.visionList li {
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  color: #9fb0c8;
+  padding-left: 2rem;
+  position: relative;
+
+  &::before {
+    content: "▸";
+    color: #FF7A00;
+    position: absolute;
+    left: 0;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+/* -----------------------------------------------------
+   VALUES — Neon Grid Cards
+----------------------------------------------------- */
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.valueCard {
+  padding: 2rem;
+  background: rgba(255,255,255,0.05);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  text-align: center;
+  box-shadow: 0 0 18px rgba(var(--neon-b),0.25);
+  backdrop-filter: blur(12px);
+  transition: 0.3s;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 34px rgba(var(--neon-b),0.45);
+  }
+}
+
+.valueCard h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.valueCard p {
+  color: #9fb0c8;
+}
+
+/* -----------------------------------------------------
+   EXPERTISE SECTION — Cinematic Neon Cards
+----------------------------------------------------- */
+.expertise {
+  padding: 6rem 2rem;
+  background: rgba(255,255,255,0.02);
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 2.8rem;
+  margin-bottom: 3rem;
+  @include gradient-text(#FF7A00, #0084FF);
+}
+
+.expertiseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.expertiseCard {
+  padding: 2.5rem;
+  background: rgba(255,255,255,0.04);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.07);
+  backdrop-filter: blur(12px);
+  transition: all 0.35s;
+  box-shadow: 0 0 18px rgba(var(--neon-a),0.18);
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 40px rgba(var(--neon-a),0.45);
+    border-color: rgba(var(--neon-a),0.3);
+  }
+}
+
+/* -----------------------------------------------------
+   CTA SECTION — Cinematic Gradient
+----------------------------------------------------- */
+.ctaSection {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, rgba(var(--neon-a),0.1), rgba(var(--neon-b),0.1));
+  text-align: center;
+}
+
+.ctaContent h2 {
+  font-size: 2.6rem;
+  margin-bottom: 1rem;
+  @include gradient-text(#FF7A00, #0084FF);
+}
+
+.btnPrimary {
+  padding: 1rem 2rem;
+  background: linear-gradient(90deg, #FF7A00, #0084FF);
+  border-radius: 12px;
+  color: #000;
+  font-weight: 700;
+  text-decoration: none;
+  transition: 0.3s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(var(--neon-a),0.4);
+  }
+}
+
+.btnSecondary {
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.08);
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+
+  &:hover {
+    transform: translateY(-4px);
+    background: rgba(255,255,255,0.15);
+  }
+}
+/* -----------------------------------------------------
+   TECHNOLOGY STACK — MAX NEON MODE (LEVEL 9)
+----------------------------------------------------- */
+.techStack {
+  padding: 6rem 2rem;
+  position: relative;
+  z-index: 5;
+}
+
+/* Section Title */
+.techStack .sectionTitle {
+  text-align: center;
+  font-size: 2.8rem;
+  margin-bottom: 3.5rem;
+  @include gradient-text(#FF7A00, #0084FF);
+  font-weight: 900;
+}
+
+/* Categories container */
+.techCategories {
+  display: grid;
+  gap: 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* Category Box */
+.techCategory {
+  text-align: center;
+  padding: 3rem 2rem;
+  border-radius: 20px;
+
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 0 25px rgba(var(--neon-a), 0.25),
+    inset 0 0 18px rgba(var(--neon-b), 0.12);
+
+  transition: all 0.35s var(--ease-pop);
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow:
+      0 0 45px rgba(var(--neon-a), 0.5),
+      inset 0 0 22px rgba(var(--neon-b), 0.25);
+    border-color: rgba(var(--neon-a),0.4);
+  }
+}
+
+/* Category Title */
+.techCategory h3 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  @include gradient-text(#FF7A00, #0084FF);
+}
+
+/* Tech tags layout */
+.techTags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Individual tech tags */
+.techTags span {
+  padding: 0.9rem 1.7rem;
+  border-radius: 30px;
+
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #cdd8ed;
+  font-weight: 700;
+  font-size: 1rem;
+
+  transition: all 0.3s var(--ease-smooth);
+  box-shadow: 0 0 12px rgba(var(--neon-a),0.15);
+
+  &:hover {
+    transform: translateY(-4px) scale(1.06);
+    background: linear-gradient(90deg, rgba(var(--neon-a),0.4), rgba(var(--neon-b),0.4));
+    border-color: rgba(var(--neon-a),0.6);
+    color: #000;
+    box-shadow: 0 0 20px rgba(var(--neon-a),0.55);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .techCategory {
+    padding: 2rem 1.5rem;
+  }
+  .techTags span {
+    padding: 0.8rem 1.3rem;
+    font-size: 0.9rem;
+  }
+  .techCategory h3 {
+    font-size: 1.5rem;
+  }
+}

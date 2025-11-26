@@ -1,0 +1,228 @@
+@use "@/styles/mixins" as *;
+@use "sass:color";
+
+/* -------------------------
+   API PARTNERS — LEVEL-9 B2
+   Smooth Flow — premium neon / hologram
+   ------------------------- */
+
+.section {
+  position: relative;
+  padding: 3.25rem 1rem 3.5rem;
+  max-width: 1280px;
+  margin: 0 auto;
+  z-index: 5;
+  overflow: visible;
+}
+
+/* subtle particle layer behind cards */
+.bgParticles {
+  position: absolute;
+  inset: -8% -10% auto -10%;
+  height: 260px;
+  pointer-events: none;
+  z-index: 0;
+}
+.particle {
+  --size: calc(8px + (var(--i) % 6) * 3px);
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  left: calc((var(--i) * 8%) + 2%);
+  top: calc((var(--i) * 5%) + 10%);
+  background: linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  filter: blur(6px);
+  opacity: 0.6;
+  transform: translateZ(0);
+  animation: particleFloat calc(14s + (var(--i) * 0.6s)) linear infinite;
+}
+
+/* strip wrapper smaller for balanced layout */
+.stripWrap {
+  display:flex;
+  justify-content:center;
+  margin-bottom: 1.1rem;
+  z-index: 8;
+}
+
+/* reuse neon-strip mixin (keeps consistent across site) */
+.neonStrip {
+  @include neon-strip(48px);
+
+  /* Extra hologram beam (reinforced) */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255,255,255,0.55) 50%,
+      transparent 100%
+    );
+    filter: blur(14px);
+    opacity: 0.45;
+    animation: sweep 4.6s infinite ease-in-out;
+  }
+}
+
+
+/* title and subtext */
+.sectionTitle {
+  font-size: 1.9rem;
+  font-weight: 800;
+  text-align: center;
+  margin-top: 1.2rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #FF7A00, #FF3B30, #0084FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  z-index: 8;
+}
+
+.subText {
+  text-align: center;
+  margin-bottom: 1.6rem;
+  color: rgba(159,176,200,0.9);
+  font-size: 0.98rem;
+  z-index: 8;
+}
+
+/* ticker container for smooth flow */
+.tickerWrap {
+  position: relative;
+  overflow: hidden;
+  z-index: 6;
+  margin: 0 auto;
+  border-radius: 14px;
+  padding: 0.5rem 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.04);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.55);
+}
+
+.ticker {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* track is double length content — animates left to right smoothly
+   we use animation in JSX for framer-motion; CSS fallback below */
+.track {
+  display: flex;
+  gap: 1.4rem;
+  width: max-content;
+  align-items: center;
+  padding: 1rem 2rem;
+  will-change: transform;
+}
+
+/* fallback pure-CSS smooth scroll (if motion disabled) */
+@keyframes smoothScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* individual logo card (glass + hologram) */
+.logoCard {
+  position: relative;
+  min-width: 170px;
+  max-width: 210px;
+  height: 82px;
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.6), 0 0 12px rgba(255,122,0,0.02) inset;
+  transform-origin: center;
+  transition: transform 280ms cubic-bezier(.2,.9,.25,1), box-shadow 280ms;
+  cursor: default;
+  z-index: 6;
+  will-change: transform;
+  overflow: hidden;
+}
+
+/* hologram sweep element (light sheen) */
+.holo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255,255,255,0.00) 0%, rgba(255,255,255,0.12) 45%, rgba(255,255,255,0.00) 100%);
+  transform: translateX(-140%);
+  opacity: 0.0;
+  pointer-events: none;
+  transition: opacity 360ms ease, transform 680ms ease;
+  mix-blend-mode: screen;
+}
+
+.logoCard:hover .holo {
+  opacity: 0.75;
+  transform: translateX(120%);
+}
+
+/* logo image styling */
+.logo {
+  height: 48px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.5));
+  transform: translateZ(20px);
+}
+
+/* partner name */
+.name {
+  font-size: 0.88rem;
+  color: rgba(230,235,255,0.95);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin-left: auto;
+  padding-right: 6px;
+}
+
+/* small footer note with the uploaded file path (for deploy transforms) */
+.note {
+  margin-top: 1rem;
+  text-align: center;
+  color: rgba(159,176,200,0.7);
+  font-size: 0.82rem;
+  z-index: 8;
+
+  code {
+    background: rgba(255,255,255,0.02);
+    padding: 0.18rem 0.36rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.03);
+    color: rgba(255,255,255,0.9);
+    font-weight: 600;
+  }
+}
+
+/* particle float keyframes */
+@keyframes particleFloat {
+  0%   { transform: translateY(0) translateX(0); opacity: 0.45; }
+  50%  { transform: translateY(-28px) translateX(4px); opacity: 0.9; }
+  100% { transform: translateY(0) translateX(0); opacity: 0.45; }
+}
+
+/* responsiveness */
+@media (max-width: 920px) {
+  .logoCard { min-width: 140px; height: 72px; padding: 0.6rem 0.8rem; }
+  .logo { height: 42px; }
+  .track { gap: 1rem; padding: 0.8rem 1rem; }
+}
+
+@media (max-width: 560px) {
+  .logoCard { min-width: 120px; height: 64px; padding: 0.5rem 0.6rem; }
+  .logo { height: 36px; }
+  .name { display: none; }
+  .sectionTitle { font-size: 1.35rem; }
+  .subText { font-size: 0.92rem; }
+}

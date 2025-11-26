@@ -1,0 +1,159 @@
+@use "sass:math";
+@use "@/styles/mixins" as *;
+
+/* MAIN WRAPPER */
+.introWrap {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(10,10,20,0.95), #020203);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  overflow: hidden;
+  animation: fadeOut 0.6s ease forwards;
+  animation-delay: 0.95s;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* ---------------------------------------------------------
+   PARTICLES — Rising behind logo
+--------------------------------------------------------- */
+
+.particleField {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(var(--neon-a), 0.85);
+  filter: blur(2px);
+
+  /* random placement (SASS-safe) */
+  left: calc(1% * (math.random(100) - 1));
+  top: calc(1% * (math.random(60) + 40));
+
+  animation: riseParticle 2.4s linear infinite;
+  opacity: 0;
+}
+
+
+/* alternate colors */
+.particle:nth-child(3n) {
+  background: rgba(var(--neon-b), 0.85);
+  width: 7px;
+  height: 7px;
+}
+.particle:nth-child(4n) {
+  background: rgba(var(--neon-c), 0.85);
+  width: 5px;
+  height: 5px;
+}
+
+/* randomized delays */
+@for $i from 1 through 120 {
+  .particle:nth-child(#{$i}) {
+    animation-delay: #{math.div(math.random(150), 100)}s;
+    transform: translateX(#{math.random(40) - 20}px);
+  }
+}
+
+@keyframes riseParticle {
+  0% {
+    transform: translateY(20px) scale(0.8);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-120vh) scale(1);
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------
+   LOGO + TEXT + SWEEP
+--------------------------------------------------------- */
+
+.logoWrap {
+  position: relative;
+  text-align: center;
+  transform: translateY(10px);
+  opacity: 0;
+  z-index: 2;
+  animation: introPop 0.8s cubic-bezier(.16,.8,.3,1) forwards;
+}
+
+@keyframes introPop {
+  0%   { opacity: 0; transform: translateY(20px) scale(0.88); }
+  60%  { opacity: 1; transform: translateY(0) scale(1.04); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.logo {
+  width: 160px;
+  height: auto;
+  opacity: 0;
+  filter: drop-shadow(0 0 35px rgba(var(--neon-a),0.4));
+  animation: logoGlow 1.2s ease forwards;
+  animation-delay: 0.2s;
+}
+
+@keyframes logoGlow {
+  0%   { opacity: 0; filter: blur(12px) drop-shadow(0 0 0 rgba(var(--neon-a),0.2)); }
+  50%  { opacity: 1; filter: blur(4px) drop-shadow(0 0 24px rgba(var(--neon-a),0.5)); }
+  100% { opacity: 1; filter: blur(0px) drop-shadow(0 0 30px rgba(var(--neon-a),0.8)); }
+}
+
+.text {
+  margin-top: 1rem;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 6px;
+  background: linear-gradient(90deg, rgba(var(--neon-a),1), rgba(var(--neon-b),1));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  opacity: 0;
+  animation: textFade 1s ease forwards;
+  animation-delay: 0.45s;
+}
+
+@keyframes textFade {
+  0% { opacity: 0; filter: blur(10px); }
+  100% { opacity: 1; filter: blur(0); }
+}
+
+.sweep {
+  position: absolute;
+  inset: 0;
+  width: 140%;
+  height: 180%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.4),
+    transparent
+  );
+  transform: rotate(18deg) translateX(-150%);
+  filter: blur(25px);
+  animation: sweepAnim 1.3s ease forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes sweepAnim {
+  0%   { transform: rotate(18deg) translateX(-150%); opacity: 0; }
+  30%  { opacity: 0.7; }
+  100% { transform: rotate(18deg) translateX(180%); opacity: 0; }
+}

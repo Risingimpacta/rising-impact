@@ -1,0 +1,15 @@
+.partnersSection { padding: 2.5rem 1rem; background: linear-gradient(180deg,#041018,#061224); color:#eaf3ff; }
+.container { max-width:1200px; margin: 0 auto; padding: 0 12px; }
+
+.sectionTitle { font-weight:800; font-size:1.25rem; color:#fff; margin-bottom:6px; }
+.sectionSub { color:#9fb0c8; margin-bottom:12px; }
+
+.tickerWrap { overflow:hidden; border-top:1px solid rgba(255,255,255,0.03); padding:12px 0; }
+.tickerTrack { display:flex; gap:1rem; width:max-content; animation: partnerScroll 26s linear infinite; align-items:center; }
+
+@keyframes partnerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+.logoCard { display:flex; flex-direction:column; align-items:center; gap:8px; min-width:120px; padding:8px; background:rgba(255,255,255,0.01); border-radius:10px; }
+.logoWrap { width:84px; height:48px; display:grid; place-items:center; }
+.logoImg { max-width:100%; max-height:100%; object-fit:contain; }
+.logoName { font-size:0.82rem; color:#cde5ff; margin-top:4px; text-align:center; }

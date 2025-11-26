@@ -1,0 +1,425 @@
+@use "@/styles/mixins" as *;
+
+/* ---------------------------------------------------
+   SERVICES PAGE — LEVEL 9 MAX NEON MODE (OPTION C)
+--------------------------------------------------- */
+
+.page {
+  background: linear-gradient(180deg, #05030a 0%, #07091a 50%, #05030a 100%);
+  padding: 4.5rem 1.25rem 6rem;
+  color: #eaf3ff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* -------------------
+   HEADER
+------------------- */
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+  z-index: 10;
+}
+
+.sectionTitle {
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #ff7a00, #ff3b30, #0084ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.7rem;
+  letter-spacing: 1px;
+}
+
+.lead {
+  color: #9fb0c8;
+  font-size: 1.15rem;
+  max-width: 760px;
+  margin: 0.5rem auto 1rem;
+  line-height: 1.6;
+}
+
+.ctaRow {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.cta {
+  padding: 12px 18px;
+  background: linear-gradient(90deg, #ff7a00, #9d4edd);
+  border-radius: 12px;
+  color: #000;
+  font-weight: 800;
+  text-decoration: none;
+  transition: 0.3s var(--ease-pop);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(255, 122, 0, 0.35);
+  }
+}
+
+.toggle {
+  color: #b7c9e0;
+  font-weight: 600;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+
+  input {
+    transform: scale(1.15);
+  }
+}
+
+/* ======================================================
+   NEON STRIP (Particles + Sweep)
+====================================================== */
+
+.stripWrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.2rem;
+  position: relative;
+  z-index: 15;
+}
+
+.neonStrip {
+  @include neon-strip(56px);
+
+  width: 100%;
+  max-width: 1400px;
+  text-align: center;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 8px;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+
+  animation: fadeGlow 1.4s ease forwards;
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+@keyframes fadeGlow {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 28px rgba(255, 122, 0, 0.35), 0 0 42px rgba(0, 132, 255, 0.25);
+  }
+}
+
+.sweep {
+  position: absolute;
+  inset: 0;
+  width: 160%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 255, 255, 0.45),
+    transparent
+  );
+  transform: rotate(18deg) translateX(-150%);
+  filter: blur(24px);
+  animation: sweepAnim 1.9s ease forwards;
+}
+
+@keyframes sweepAnim {
+  0% {
+    transform: rotate(18deg) translateX(-160%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: rotate(18deg) translateX(160%);
+    opacity: 0;
+  }
+}
+
+.stripParticles {
+  position: absolute;
+  inset: -20px 0 0 0;
+  height: 90px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(var(--neon-a), 0.9);
+  filter: blur(2px);
+  opacity: 0.8;
+
+  left: calc(var(--i) * 6%);
+  top: calc(var(--i) * 4%);
+  animation: riseUp 6s linear infinite;
+}
+
+@keyframes riseUp {
+  0% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-80px);
+    opacity: 1;
+  }
+}
+
+.particle:nth-child(even) {
+  background: rgba(var(--neon-b), 0.9);
+}
+.particle:nth-child(odd) {
+  background: rgba(var(--neon-c), 0.9);
+}
+
+/* ---------------------------------------------------
+   CANVAS WRAPPER + FILTERS + TECHNOLOGY STRIP
+--------------------------------------------------- */
+
+.canvasWrap {
+  position: relative;
+  max-width: 1280px;
+  margin: 1.5rem auto 3rem;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 580px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.overlay {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  pointer-events: none;
+}
+
+/* FILTER BUTTONS */
+
+.filterRow {
+  display: flex;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.filterBtn,
+.filterBtnActive {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #dce6ff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.28s var(--ease-smooth);
+
+  &:hover {
+    background: rgba(255, 122, 0, 0.25);
+    border-color: rgba(255, 122, 0, 0.35);
+    transform: translateY(-3px);
+  }
+}
+
+.filterBtnActive {
+  background: linear-gradient(90deg, #ff7a00, #0084ff);
+  color: #000;
+  border: none;
+  box-shadow: 0 0 18px rgba(255, 122, 0, 0.45);
+}
+
+/* TECHNOLOGY STRIP */
+
+.techStrip {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #eaf3ff;
+  pointer-events: none;
+}
+
+.techChips {
+  display: flex;
+  gap: 10px;
+}
+
+.techChips span {
+  padding: 7px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #fff;
+  backdrop-filter: blur(10px);
+
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35), inset 0 0 12px rgba(255, 255, 255, 0.14);
+
+  transition: 0.22s ease;
+
+  &:hover {
+    background: linear-gradient(90deg, rgba(var(--neon-a), 0.35), rgba(var(--neon-b), 0.35));
+    color: #000;
+    transform: translateY(-3px);
+  }
+}
+
+/* ---------------------------------------------------
+   DETAILS GRID — CATEGORY CARDS (OPTION C)
+--------------------------------------------------- */
+
+.details {
+  max-width: 1300px;
+  margin: 4rem auto 0;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.details h2 {
+  font-size: 2.4rem;
+  background: var(--ri-neon);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.details p {
+  color: #9fb0c8;
+  margin-bottom: 2.4rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* CATEGORY GRADIENT WRAPPERS */
+
+.card {
+  padding: 1.9rem;
+  border-radius: 18px;
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: 0.35s ease;
+
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.55), inset 0 0 16px rgba(255, 255, 255, 0.08);
+
+  &:hover {
+    transform: translateY(-10px) scale(1.03);
+    box-shadow: 0 0 45px var(--tag-glow), inset 0 0 28px var(--tag-glow);
+  }
+}
+
+.tag_web {
+  --tag-glow: rgba(255, 100, 0, 0.6);
+  background: linear-gradient(135deg, #ff7a00, #ff3b82);
+}
+
+.tag_software {
+  --tag-glow: rgba(0, 179, 255, 0.6);
+  background: linear-gradient(135deg, #00c6ff, #0072ff);
+}
+
+.tag_blockchain {
+  --tag-glow: rgba(255, 70, 0, 0.6);
+  background: linear-gradient(135deg, #ff3b30, #ff9500);
+}
+
+.tag_web3 {
+  --tag-glow: rgba(28, 240, 255, 0.6);
+  background: linear-gradient(135deg, #00f2fe, #4facfe);
+}
+
+.tag_ecom {
+  --tag-glow: rgba(170, 70, 255, 0.6);
+  background: linear-gradient(135deg, #9d4edd, #ff6bd6);
+}
+
+.tag_security {
+  --tag-glow: rgba(255, 210, 20, 0.6);
+  background: linear-gradient(135deg, #ffd43b, #ffb800);
+}
+
+/* CARD CONTENT */
+
+.cardLogo {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 14px;
+  margin-bottom: 12px;
+}
+
+.cardTitle {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.cardDesc {
+  color: #d6e3ff;
+  margin: 12px 0 16px;
+  font-size: 1rem;
+}
+
+/* TECH TAGS (3D Hybrid Neon) */
+
+.techList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tech {
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45), inset 0 0 12px rgba(255, 255, 255, 0.16);
+
+  transition: 0.25s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.55), inset 0 0 14px rgba(255, 255, 255, 0.35);
+  }
+}
+
+/* ---------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .canvasWrap {
+    height: 420px;
+  }
+  .sectionTitle {
+    font-size: 2.4rem;
+  }
+}
