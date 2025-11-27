@@ -4,7 +4,7 @@ import React, { useRef, useMemo, useState, Suspense, useEffect } from "react";
 import styles from "@/styles/ServicesPage.module.scss";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Html, useTexture, OrbitControls, Instances, Instance } from "@react-three/drei";
-import { EffectComposer, Bloom, DepthOfField, Noise } from "@react-three/postprocessing";
+import { EffectComposer, Bloom, Noise } from "@react-three/postprocessing";
 import { motion } from "framer-motion";
 
 /* ------------------------------------------------------
@@ -39,7 +39,7 @@ const SERVICES = [
     logo: "/logos/Blockchain_Development.jpg",
     color: [1.0, 0.12, 0.0],
     category: "blockchain",
-    asset: "blockchain-development"
+    asset: "binancecoin" // Using existing coin ID
   },
   {
     key: "web3",
@@ -49,7 +49,7 @@ const SERVICES = [
     logo: "/logos/web3anddapps.png",
     color: [0.16, 0.8, 0.6],
     category: "web3",
-    asset: "web3anddapps"
+    asset: "cardano" // Using existing coin ID
   },
   {
     key: "ecom",
@@ -66,10 +66,10 @@ const SERVICES = [
     title: "Security Audits",
     desc: "Comprehensive smart contract & platform security assessments.",
     tech: ["PenTest", "Audits", "Vulnerability"],
-    logo: "/logos/securityaudits.png",
+    logo: "/logos/SecurityAudits.png", // ✅ Fixed case sensitivity
     color: [1.0, 0.9, 0.1],
     category: "security",
-    asset: "securityaudits"
+    asset: "tron" // Using existing coin ID
   }
 ];
 
@@ -153,7 +153,7 @@ function ServiceCard3D({ idx, data, spark = [] }) {
   return (
     <group
       ref={groupRef}
-      position={[idx % 3 - 1 * 2.15, 0, -Math.floor(idx / 3) * 0.9]}
+      position={[(idx % 3 - 1) * 2.15, 0, -Math.floor(idx / 3) * 0.9]} // ✅ Fixed positioning calculation
     >
       <Float floatIntensity={0.6} rotationIntensity={0.8} speed={0.8}>
         <mesh>
@@ -171,7 +171,8 @@ function ServiceCard3D({ idx, data, spark = [] }) {
             <div className={styles.cardTitle3D}>{data.title}</div>
             <div className={styles.cardDesc3D}>{data.desc}</div>
 
-            <SparklineSVG data={spark} />
+            {/* Sparkline - only show if we have data */}
+            {spark.length > 0 && <SparklineSVG data={spark} />}
 
             <div className={styles.techList3D}>
               {data.tech.map((t) => (
@@ -212,7 +213,36 @@ function Scene({ services, sparks }) {
 ------------------------------------------------------- */
 export default function ServicesPage() {
   const [filter, setFilter] = useState("all");
+  const [cryptoData, setCryptoData] = useState({});
   const filtered = filter === "all" ? SERVICES : SERVICES.filter((s) => s.category === filter);
+
+  // Fetch crypto data from local API to avoid CORS
+  useEffect(() => {
+    async function fetchCryptoData() {
+      try {
+        const response = await fetch('/api/crypto');
+        if (response.ok) {
+          const data = await response.json();
+          
+          // Process the data for sparklines
+          const sparks = {};
+          data.forEach(coin => {
+            if (coin.sparkline_in_7d?.price) {
+              // Take every 4th point to reduce data size
+              sparks[coin.id] = coin.sparkline_in_7d.price.filter((_, i) => i % 4 === 0);
+            }
+          });
+          
+          setCryptoData(sparks);
+        }
+      } catch (error) {
+        console.log('Failed to fetch crypto data:', error);
+        // Continue without crypto data - sparklines will be hidden
+      }
+    }
+
+    fetchCryptoData();
+  }, []);
 
   return (
     <section className={styles.page}>
@@ -248,6 +278,7 @@ export default function ServicesPage() {
           <a
             className={styles.cta}
             target="_blank"
+            rel="noopener noreferrer" // ✅ Added for security
             href="https://teams.live.com/l/invite/FEAQ_SAnU1l-eZ7kwI?v=g1"
           >
             Book Meeting on Microsoft Teams
@@ -268,7 +299,7 @@ export default function ServicesPage() {
           </EffectComposer>
 
           <Suspense fallback={null}>
-            <Scene services={filtered} sparks={{}} />
+            <Scene services={filtered} sparks={cryptoData} /> {/* ✅ Pass crypto data */}
           </Suspense>
         </Canvas>
 

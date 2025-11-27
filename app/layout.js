@@ -6,6 +6,7 @@ import FloatingTeamsButton from "@/components/FloatingTeamsButton";
 import TrackPageView from "@/components/TrackPageView";
 import { Bona_Nova_SC } from "next/font/google";
 import Script from "next/script";
+import { Suspense } from "react"; // Import Suspense
 
 const bona = Bona_Nova_SC({
   subsets: ["latin"],
@@ -67,8 +68,10 @@ export default function RootLayout({ children }) {
         <FloatingTeamsButton />
         <Footer />
         
-        {/* Page View Tracking */}
-        <TrackPageView />
+        {/* Page View Tracking - WRAPPED IN SUSPENSE */}
+        <Suspense fallback={null}>
+          <TrackPageView />
+        </Suspense>
       </body>
     </html>
   );
