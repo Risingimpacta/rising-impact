@@ -1,0 +1,263 @@
+@use "@/styles/mixins" as *;
+
+/* FOOTER: NEON + GLASS + TICKER */
+.footer {
+  position: relative;
+  padding: 0;
+  overflow: visible;
+  background: linear-gradient(180deg, #04030A, #07051A 60%, #05030A);
+  color: var(--muted);
+  z-index: 1;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+
+  /* TOP NEON STRIP (ensure it's above everything) */
+  /* =============================
+   ANIMATED NEON STRIP (TOP + BOTTOM)
+============================= */
+.neonStrip,
+.neonStripBottom {
+  width: 100%;
+  padding: 0.85rem 0;
+  text-align: center;
+  font-weight: 900;
+  font-size: 0.9rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #000;
+  position: relative;
+  overflow: hidden;
+
+  /* Animated neon gradient */
+  background: linear-gradient(
+    90deg,
+    rgba(var(--neon-a),1),
+    rgba(var(--neon-b),1),
+    rgba(var(--neon-d),1),
+    rgba(var(--neon-a),1)
+  );
+  background-size: 400% 400%;
+  animation: neonFlow 6s ease-in-out infinite;
+
+  clip-path: polygon(0 0, 100% 0, 98% 100%, 2% 100%);
+}
+
+/* BRIGHTER BOTTOM STRIP */
+.neonStripBottom {
+  margin-top: 3rem;
+  font-size: 0.8rem;
+  animation-delay: 1.5s;
+}
+
+/* === Animated flowing gradient === */
+@keyframes neonFlow {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* === Add holographic sweep beam === */
+.neonStrip::after,
+.neonStripBottom::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,0.55) 50%,
+    transparent 100%
+  );
+  filter: blur(14px);
+  opacity: 0.45;
+  animation: sweep 5s infinite;
+}
+
+@keyframes sweep {
+  0%   { transform: translateX(0); opacity: 0; }
+  40%  { opacity: 0.7; }
+  100% { transform: translateX(320%); opacity: 0; }
+}
+
+
+  .gridBg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .shapes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    .blob1, .blob2 {
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.28;
+      animation: floaty 18s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+    .blob1 { background: rgba(var(--neon-a), 0.48); top: -40px; left: -70px; }
+    .blob2 { background: rgba(var(--neon-b), 0.48); bottom: -50px; right: -80px; }
+  }
+
+  .holo { position: absolute; inset: 0; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.16), transparent); animation: holo 6s ease-in-out infinite; transform: translateX(-100%); opacity: 0; z-index: 1; pointer-events: none; }
+
+  .globeWrap { position: absolute; left: 50%; bottom: 10%; transform: translateX(-50%); width: 420px; height: 420px; pointer-events: none; opacity: 0.16; z-index: 0; }
+  .globe { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(from 0deg, rgba(var(--neon-a),0.6), rgba(var(--neon-b),0.4)); filter: blur(160px); animation: rotateGlobe 28s linear infinite; }
+
+  @keyframes floaty { 0%{transform:translateY(0)}50%{transform:translateY(-32px)}100%{transform:translateY(0)} }
+  @keyframes holo { 0%{transform:translateX(-100%);opacity:0}40%{opacity:0.35}100%{transform:translateX(120%);opacity:0} }
+  @keyframes rotateGlobe { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  /* MAIN CONTENT (4 columns) */
+  .inner {
+    @include container;
+    position: relative;
+    z-index: 5;
+    padding: 2.4rem 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2.2rem;
+  }
+
+  .column {
+    h4 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 0.9rem;
+      @include gradient-text(rgba(var(--neon-a), 1), rgba(var(--neon-b), 1));
+    }
+
+    a {
+      display: block;
+      padding: 4px 0;
+      color: var(--muted);
+      transition: 0.22s;
+      &:hover { color: #fff; transform: translateX(6px); }
+    }
+
+    .label { margin-top: 0.6rem; font-size: 0.82rem; opacity: 0.75; }
+  }
+
+  .socialRow { display: flex; gap: 0.6rem; align-items: center; margin: 6px 0; }
+  .icon { width: 18px; height: 18px; display: inline-block; fill: currentColor; color: #fff; opacity: 0.95; margin-right: 8px; }
+
+  .cta {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.7rem 1.6rem;
+    background: var(--ri-neon);
+    color: #000;
+    font-weight: 700;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,122,0,0.35);
+    transition: 0.3s;
+    &:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 0 32px rgba(255,122,0,0.65); }
+  }
+
+  /* ---------------------------
+     SENTIMENT SCROLLING TICKER
+     continuous left scroll
+     --------------------------- */
+  .sentimentWrap {
+    position: relative;
+    z-index: 6;
+    margin-top: 1rem;
+    margin-bottom: 0.6rem;
+    padding: 0.5rem 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+    border-top: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.02);
+    backdrop-filter: blur(6px);
+  }
+
+  .ticker {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .tickerTrack {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    white-space: nowrap;
+    padding: 0.6rem 0;
+    /* slide left continuously: translateX from 0 -> -50% (we duplicate items) */
+    animation: scrollLeft 28s linear infinite;
+  }
+
+  .tickerItem {
+    display: inline-flex;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.28rem 0.8rem;
+    border-radius: 10px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.015), rgba(255,255,255,0.00));
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    min-width: 200px;
+    justify-content: space-between;
+  }
+
+  .tickerText {
+    font-size: 0.95rem;
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(255,122,0,0.08);
+  }
+
+  .sparkWrap { margin-left: 1rem; display:flex; align-items:center; }
+
+  @keyframes scrollLeft {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /* footer sparkline native tweak */
+  .footerSpark { display:block; }
+
+  /* bottom neon strip */
+  
+
+  /* back to top rocket */
+  .backToTop {
+    position: fixed;
+    right: 18px;
+    bottom: 24px;
+    z-index: 99999;
+    background: linear-gradient(90deg, rgba(var(--neon-a),1), rgba(var(--neon-b),1));
+    color: #000;
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 8px 26px rgba(255,122,0,0.18);
+  }
+
+  /* micro helpers */
+  .label { color: var(--muted); }
+  .copy { text-align:center; margin-top: 1.2rem; color: var(--muted); }
+}
+
+/* small responsive tweaks */
+@media (max-width: 720px) {
+  .footer .tickerItem { min-width: 140px; padding: 0.2rem 0.6rem; }
+  .footer .inner { padding: 1.2rem 0; grid-gap: 1rem; }
+}

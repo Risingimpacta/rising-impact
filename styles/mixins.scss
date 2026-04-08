@@ -1,0 +1,147 @@
+/* -------------------------------------------------------
+   RISING IMPACT — GLOBAL REUSABLE MIXINS
+------------------------------------------------------- */
+
+@use "sass:color";
+@use "sass:math";
+
+/* FLEX UTILS */
+@mixin flex($dir: row, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $dir;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+/* CONTAINER */
+@mixin container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding-inline: 1.2rem;
+}
+
+/* GRADIENT TEXT */
+@mixin gradient-text($from, $to) {
+  background: linear-gradient(90deg, $from, $to);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* NEON GLOW */
+@mixin neon-glow($rgb, $strength: 0.45, $spread: 32px) {
+  box-shadow: 0 0 $spread rgba($rgb, $strength);
+  filter: drop-shadow(0 0 (math.div($spread, 1.5)) rgba($rgb, $strength));
+}
+
+/* GLASS CARD */
+@mixin glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: var(--radius);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 1.25rem;
+  transition: 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* FLOATY ANIMATION */
+@mixin floaty($distance: 18px, $duration: 6s) {
+  animation: floatyAnim $duration ease-in-out infinite;
+
+  @keyframes floatyAnim {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-$distance); }
+    100% { transform: translateY(0); }
+  }
+}
+
+/* GRID */
+@mixin auto-grid($min: 300px, $gap: 1.8rem) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min, 1fr));
+  gap: $gap;
+}
+
+/* ============================================================
+   LEVEL-7 NEON STRIP MIXIN (Rising Impact Special Edition)
+   Features:
+   - Neon gradient base (uses --ri-neon)
+   - Sweep beam hologram animation
+   - Glow bloom
+   - Glass-edge diffraction shine
+   - Pixel-edge highlight
+============================================================ */
+
+@mixin neon-strip(
+  $height: 52px,
+  $radius: 10px,
+  $letterspace: 4px,
+  $textsize: 0.9rem
+) {
+  width: 100%;
+  height: $height;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: $textsize;
+  font-weight: 900;
+  letter-spacing: $letterspace;
+  text-transform: uppercase;
+
+  background: var(--ri-neon);
+  color: #000;
+  border-radius: $radius;
+  position: relative;
+  overflow: hidden;
+
+  /* Outer neon bloom */
+  box-shadow:
+    0 0 14px rgba(255,122,0,0.55),
+    0 0 22px rgba(255,59,48,0.45),
+    0 0 38px rgba(255,204,0,0.4);
+
+  /* Glass highlight line */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(90deg, rgba(255,255,255,0.6), rgba(255,255,255,0));
+    opacity: 0.9;
+    pointer-events: none;
+  }
+
+  /* Hologram sweep beam */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255,255,255,0.55) 50%,
+      transparent 100%
+    );
+    filter: blur(14px);
+    opacity: 0.45;
+    animation: sweep 4.6s infinite ease-in-out;
+  }
+}
+
+@keyframes sweep {
+  0%   { left: -130%; }
+  55%  { left: 150%; }
+  100% { left: -130%; }
+}

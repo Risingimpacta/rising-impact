@@ -1,0 +1,130 @@
+@use "@/styles/mixins" as *;
+
+.section {
+  padding: 4rem 1rem;
+  text-align: center;
+  position: relative;
+}
+
+/* Unified Neon Strip */
+.neonStrip {
+  @include neon-strip(48px);
+
+  /* Extra hologram beam (reinforced) */
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 45%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent 0%,
+      rgba(255,255,255,0.55) 50%,
+      transparent 100%
+    );
+    filter: blur(14px);
+    opacity: 0.45;
+    animation: sweep 4.6s infinite ease-in-out;
+  }
+}
+
+.sectionTitle {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: var(--ri-neon);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 3rem;
+}
+
+.grid {
+  max-width: 1200px;
+  margin: auto;
+  display: grid;
+  gap: 1.6rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  position: relative;
+  background: rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 1.2rem;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.logo {
+  width: 100%;
+  max-height: 110px;
+  object-fit: contain;
+}
+
+.name {
+  margin-top: 0.6rem;
+  font-weight: 600;
+  text-align: center;
+}
+.section {
+  padding: 4rem 1rem;
+  position: relative;
+  text-align: center;
+}
+
+/* TOP STRIP */
+.headerStrip {
+  text-align: center;
+  width: 100%;
+  padding: 0.6rem;
+  background: linear-gradient(90deg, rgba(var(--neon-a),0.4), rgba(var(--neon-b),0.4));
+  font-weight: 900;
+  letter-spacing: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 2rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* === HOLOGRAM SWEEP BEAM PATCH === */
+.headerStrip::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255,255,255,0.55) 50%,
+    transparent 100%
+  );
+  filter: blur(14px);
+  opacity: 0.45;
+  animation: sweep 5s infinite;
+}
+
+@keyframes sweep {
+  0%   { left: -120%; }
+  50%  { left: 160%; }
+  100% { left: -120%; }
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 800;
+  background: var(--ri-neon);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 2rem;
+}

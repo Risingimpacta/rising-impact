@@ -1,0 +1,128 @@
+.contactPage {
+  background: linear-gradient(180deg,#05030A,#07091A);
+  padding: 3.5rem 1rem;
+  color: #eaf3ff;
+  min-height: 100vh;
+}
+
+/* header */
+
+.contactHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contactTitle {
+  font-size: 2.25rem;
+  font-weight: 800;
+  background: linear-gradient(90deg,#FF7A00,#0084FF);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.contactLead {
+  color: #9fb0c8;
+  margin-top: 0.6rem;
+}
+
+/* layout */
+
+.contactContainer {
+  max-width: 1100px;
+  margin: auto;
+}
+
+.contactGrid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width:768px) {
+  .contactGrid {
+    grid-template-columns: repeat(2,1fr);
+  }
+}
+
+/* card */
+
+.contactCard {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 12px;
+  padding: 1.5rem;
+  backdrop-filter: blur(8px);
+}
+
+/* info */
+
+.infoTitle {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.infoText {
+  color: #9fb0c8;
+  margin-bottom: 1rem;
+}
+
+.infoItem {
+  margin-bottom: 10px;
+}
+
+/* form */
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.input,
+.textarea {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.02);
+  color: #eaf3ff;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: #9fb0c8;
+}
+
+.textarea {
+  min-height: 120px;
+  resize: none;
+}
+
+/* button */
+
+.submitBtn {
+  background: linear-gradient(90deg,#FF7A00,#9D4EDD);
+  border: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #000;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submitBtn:hover {
+  opacity: 0.9;
+}
+
+/* whatsapp */
+
+.whatsappLink {
+  color: #22c55e;
+  margin-left: 6px;
+  text-decoration: none;
+}
+
+.whatsappLink:hover {
+  text-decoration: underline;
+}

@@ -1,0 +1,25 @@
+/* -------------------------------------------------------
+   RISING IMPACT — GLOBAL BRAND TOKENS
+------------------------------------------------------- */
+
+:root {
+  /* BRAND COLORS */
+  --ri-orange: #FF7A00;
+  --ri-red: #FF3B30;
+  --ri-green: #34C759;
+  --ri-yellow: #FFCC00;
+
+  /* NEON ACCENTS */
+  --neon-a: 255,122,0;   /* orange */
+  --neon-b: 255,59,48;   /* red */
+  --neon-c: 52,199,89;   /* green */
+  --neon-d: 255,204,0;   /* yellow */
+
+  /* UI TOKENS */
+  --bg-dark: #05030A;
+  --panel: rgba(255,255,255,0.04);
+  --glass: rgba(255,255,255,0.05);
+  --muted: #9ca8b9;
+  --radius: 14px;
+  --max-width: 1280px;
+}

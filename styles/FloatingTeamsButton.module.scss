@@ -1,0 +1,18 @@
+.floatingBtn {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #2563eb;
+  padding: 0.9rem 1.4rem;
+  border-radius: 50px;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 999;
+  transition: 0.3s ease;
+
+  &:hover {
+    background: #1e40af;
+    transform: translateY(-4px);
+  }
+}
