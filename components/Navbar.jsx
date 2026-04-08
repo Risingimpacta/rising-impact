@@ -24,6 +24,17 @@ const Icons = {
 };
 
 /* ----------------------------------------------
+   NAV ITEM COMPONENT
+---------------------------------------------- */
+const NavItem = ({ href, id, label, icon, isActive }) => (
+  <Link href={href} className={`${styles.navLink} ${isActive ? styles.active : ""}`}>
+    <Icon path={icon} />
+    <span>{label}</span>
+    {isActive && <div className={styles.activeGlow} />}
+  </Link>
+);
+
+/* ----------------------------------------------
    NAVBAR
 ---------------------------------------------- */
 export default function Navbar() {
@@ -49,24 +60,10 @@ export default function Navbar() {
   }, []);
 
   /* ----------------------------------------------
-     NAVIGATION ITEM
-  ---------------------------------------------- */
-  const NavItem = ({ href, id, label, icon }) => (
-    <Link
-      href={href}
-      className={`${styles.navItem} ${active === id ? styles.activeLink : ""}`}
-    >
-      <Icon path={icon} />
-      <span>{label}</span>
-    </Link>
-  );
-
-  /* ----------------------------------------------
      VIEW
   ---------------------------------------------- */
   return (
     <header className={styles.navbar}>
-
       {/* Particle Layer */}
       <div className={styles.particles}>
         {Array.from({ length: 24 }).map((_, i) => (
@@ -78,7 +75,6 @@ export default function Navbar() {
       <div className={styles.neonRail}></div>
 
       <div className={styles.inner}>
-
         {/* Logo */}
         <Link href="/" className={styles.logoWrap}>
           <Image
@@ -92,16 +88,17 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className={styles.links}>
-          <NavItem href="/" id="home" label="Home" icon={Icons.home} />
-          <NavItem href="/about" id="about" label="About" icon={Icons.about} />
-          <NavItem href="/services" id="services" label="Services" icon={Icons.services} />
-          <NavItem href="/technologies" id="technologies" label="Technologies" icon={Icons.tech} />
-          <NavItem href="/demos" id="demos" label="Demos" icon={Icons.demos} />
+          <NavItem href="/" id="home" label="Home" icon={Icons.home} isActive={active === "home"} />
+          <NavItem href="/about" id="about" label="About" icon={Icons.about} isActive={active === "about"} />
+          <NavItem href="/services" id="services" label="Services" icon={Icons.services} isActive={active === "services"} />
+          <NavItem href="/technologies" id="technologies" label="Technologies" icon={Icons.tech} isActive={active === "technologies"} />
+          <NavItem href="/demos" id="demos" label="Demos" icon={Icons.demos} isActive={active === "demos"} />
 
           {/* Contact (Book a Meeting) */}
           <a
             href="https://teams.live.com/l/invite/FEAQ_SAnU1l-eZ7kwI?v=g1"
             target="_blank"
+            rel="noopener noreferrer"
             className={styles.meetingBtn}
           >
             <Icon path={Icons.meeting} />
@@ -125,15 +122,16 @@ export default function Navbar() {
       {/* Mobile Drawer Menu */}
       {open && (
         <div className={styles.mobileMenu}>
-          <NavItem href="/" id="home" label="Home" icon={Icons.home} />
-          <NavItem href="/about" id="about" label="About" icon={Icons.about} />
-          <NavItem href="/services" id="services" label="Services" icon={Icons.services} />
-          <NavItem href="/technologies" id="technologies" label="Technologies" icon={Icons.tech} />
-          <NavItem href="/#demos" id="demos" label="Demos" icon={Icons.demos} />
+          <NavItem href="/" id="home" label="Home" icon={Icons.home} isActive={active === "home"} />
+          <NavItem href="/about" id="about" label="About" icon={Icons.about} isActive={active === "about"} />
+          <NavItem href="/services" id="services" label="Services" icon={Icons.services} isActive={active === "services"} />
+          <NavItem href="/technologies" id="technologies" label="Technologies" icon={Icons.tech} isActive={active === "technologies"} />
+          <NavItem href="/#demos" id="demos" label="Demos" icon={Icons.demos} isActive={active === "demos"} />
 
           <a
             href="https://teams.live.com/l/invite/FEAQ_SAnU1l-eZ7kwI?v=g1"
             target="_blank"
+            rel="noopener noreferrer"
             className={styles.meetingBtnMobile}
           >
             <Icon path={Icons.meeting} />
