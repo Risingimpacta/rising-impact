@@ -1,4 +1,6 @@
 "use client";
+
+import Image from "next/image";
 import styles from "@/styles/ApiPartners.module.scss";
 import { motion } from "framer-motion";
 
@@ -44,7 +46,14 @@ export default function ApiPartners() {
               transition={{ type: "spring", stiffness: 140, damping: 12 }}
             >
               <div className={styles.holo}></div>
-              <img src={`/logos/${p.file}`} alt={p.name} className={styles.logo} />
+              <Image 
+                src={`/logos/${p.file}`} 
+                alt={p.name} 
+                className={styles.logo} 
+                width={100}
+                height={60}
+                unoptimized
+              />
               <div className={styles.name}>{p.name}</div>
             </motion.div>
           ))}
