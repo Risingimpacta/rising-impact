@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useMemo, useState, Suspense, useEffect } from "react";
+import Image from "next/image";
 import styles from "@/styles/ServicesPage.module.scss";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Html, useTexture, OrbitControls, Instances, Instance } from "@react-three/drei";
@@ -14,7 +15,7 @@ const SERVICES = [
   { key: "blockchain", title: "Blockchain Development", desc: "Smart contracts, tokens, DEXs, and DeFi apps.", tech: ["Solidity", "Hardhat", "OpenZeppelin"], logo: "/logos/Blockchain_Development.jpg", color: [1.0, 0.12, 0.0], category: "blockchain", asset: "blockchain-development" },
   { key: "web3", title: "Web3 & DApps", desc: "Decentralized apps, wallet integration, NFTs & digital asset systems.", tech: ["Web3.js", "Ethers", "IPFS"], logo: "/logos/web3anddapps.png", color: [0.16, 0.8, 0.6], category: "web3", asset: "web3anddapps" },
   { key: "ecom", title: "E-Commerce", desc: "High-performance e-commerce stores and headless setups.", tech: ["Shopify", "Stripe", "Sanity"], logo: "/logos/E-Commerce.jpg", color: [0.7, 0.2, 1.0], category: "ecom", asset: "solana" },
-  { key: "security", title: "Security Audits", desc: "Comprehensive smart contract & platform security assessments.", tech: ["PenTest", "Audits", "Vulnerability"], logo: "/logos/securityaudits.png", color: [1.0, 0.9, 0.1], category: "security", asset: "securityaudits" },
+  { key: "security", title: "Security Audits", desc: "Comprehensive smart contract & platform security assessments.", tech: ["PenTest", "Audits", "Vulnerability"], logo: "/logos/SecurityAudits.png", color: [1.0, 0.9, 0.1], category: "security", asset: "securityaudits" },
 ];
 
 function SparklineSVG({ data = [], width = 140, height = 34, color = "rgba(52,199,89,1)" }) {
@@ -47,27 +48,45 @@ function SparklineSVG({ data = [], width = 140, height = 34, color = "rgba(52,19
 
 function ParticleCloud({ count = 80 }) {
   const meshRef = useRef();
-  const positions = useMemo(()=> {
+  
+  // Generate positions directly without state (using useMemo is fine since it's not random during render)
+  const positions = useMemo(() => {
     const out = [];
-    for (let i=0;i<count;i++) out.push([ (Math.random()-0.5)*10, (Math.random()-0.5)*2.4, -Math.random()*5 ]);
+    // Use a deterministic approach based on index to avoid Math.random during render
+    for (let i = 0; i < count; i++) {
+      // Use sine/cosine with index to generate deterministic pseudo-random positions
+      const x = (Math.sin(i * 12.9898) * 43758.5453) % 1;
+      const y = (Math.cos(i * 78.233) * 43758.5453) % 1;
+      const z = (Math.sin(i * 37.719) * 43758.5453) % 1;
+      out.push([
+        (x - 0.5) * 10,
+        (y - 0.5) * 2.4,
+        -z * 5
+      ]);
+    }
     return out;
   }, [count]);
 
-  useFrame(() => { if (meshRef.current) meshRef.current.rotation.y += 0.0008; });
+  useFrame(() => {
+    if (meshRef.current) meshRef.current.rotation.y += 0.0008;
+  });
 
   return (
     <Instances ref={meshRef}>
-      <sphereGeometry args={[0.02,6,6]} />
-      <meshStandardMaterial emissive={[0.02,0.04,0.08]} color={[0.02,0.02,0.03]} />
-      {positions.map((p,i)=> <Instance key={i} position={p} />)}
+      <sphereGeometry args={[0.02, 6, 6]} />
+      <meshStandardMaterial emissive={[0.02, 0.04, 0.08]} color={[0.02, 0.02, 0.03]} />
+      {positions.map((p, i) => (
+        <Instance key={i} position={p} />
+      ))}
     </Instances>
   );
 }
 
 function ServiceCard3D({ idx, data, spark = [] }) {
   const groupRef = useRef();
-  const logo = useTexture(data.logo || "/logos/coingecko.png");
+  const logo = useTexture(data.logo || "/logos/placeholder.png");
   const seed = idx * 0.35;
+  
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
@@ -79,11 +98,11 @@ function ServiceCard3D({ idx, data, spark = [] }) {
   const emissive = data.color ? data.color.map(c => c * 0.45) : [0.08, 0.25, 0.6];
 
   return (
-    <group ref={groupRef} position={[ (idx % 3 - 1) * 2.15, 0, -Math.floor(idx / 3) * 0.9 ]}>
+    <group ref={groupRef} position={[(idx % 3 - 1) * 2.15, 0, -Math.floor(idx / 3) * 0.9]}>
       <Float floatIntensity={0.6} rotationIntensity={0.8} speed={0.8}>
         <mesh castShadow receiveShadow>
           <boxGeometry args={[1.9, 1.12, 0.16]} />
-          <meshStandardMaterial color={[0.04,0.04,0.06]} metalness={0.25} roughness={0.06} emissive={emissive} emissiveIntensity={0.02} />
+          <meshStandardMaterial color={[0.04, 0.04, 0.06]} metalness={0.25} roughness={0.06} emissive={emissive} emissiveIntensity={0.02} />
         </mesh>
 
         <mesh position={[0, 0.14, 0.085]}>
@@ -114,35 +133,40 @@ function Scene({ services, sparks }) {
   return (
     <>
       <ambientLight intensity={0.6} />
-      <directionalLight position={[6,8,6]} intensity={1.05} castShadow />
-      <pointLight position={[-6,-4,-6]} intensity={0.18} color={[0.2,0.5,1]} />
+      <directionalLight position={[6, 8, 6]} intensity={1.05} castShadow />
+      <pointLight position={[-6, -4, -6]} intensity={0.18} color={[0.2, 0.5, 1]} />
 
       <Suspense fallback={null}>
         <group rotation={[-0.05, 0.07, 0]}>
-          {services.map((s,i)=> <ServiceCard3D key={s.key} idx={i} data={s} spark={sparks[s.asset] || []} />)}
+          {services.map((s, i) => <ServiceCard3D key={s.key} idx={i} data={s} spark={sparks[s.asset] || []} />)}
         </group>
-
         <ParticleCloud count={90} />
       </Suspense>
 
-      <mesh rotation={[-Math.PI/2,0,0]} position={[0,-1.1,0]} receiveShadow>
-        <planeGeometry args={[28,16]} />
-        <meshStandardMaterial color={[0.02,0.02,0.02]} roughness={0.9} metalness={0.2} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.1, 0]} receiveShadow>
+        <planeGeometry args={[28, 16]} />
+        <meshStandardMaterial color={[0.02, 0.02, 0.02]} roughness={0.9} metalness={0.2} />
       </mesh>
 
-      <OrbitControls enablePan={false} enableZoom={false} maxPolarAngle={Math.PI/2.2} minPolarAngle={Math.PI/3.2} />
+      <OrbitControls enablePan={false} enableZoom={false} maxPolarAngle={Math.PI / 2.2} minPolarAngle={Math.PI / 3.2} />
     </>
   );
 }
 
 export default function ServicesPage() {
   const [filter, setFilter] = useState("all");
-  const [filtered, setFiltered] = useState(SERVICES);
   const [sparks, setSparks] = useState({});
   const BUFFER_LEN = 42;
   const assets = useMemo(() => Array.from(new Set(SERVICES.map(s => s.asset).filter(Boolean))), []);
 
-  useEffect(()=> setFiltered(filter==="all"?SERVICES:SERVICES.filter(s=>s.category===filter)), [filter]);
+  // Use useMemo instead of state + useEffect for filtered services
+  const filteredServices = useMemo(() => {
+    return filter === "all" 
+      ? SERVICES 
+      : SERVICES.filter(s => s.category === filter);
+  }, [filter]);
+
+  const renderServices = useMemo(() => filteredServices.slice(0, 6), [filteredServices]);
 
   useEffect(() => {
     let mounted = true;
@@ -201,11 +225,11 @@ export default function ServicesPage() {
         try {
           const data = JSON.parse(evt.data);
           setSparks(prev => {
-            const next = { ...(prev||{}) };
+            const next = { ...(prev || {}) };
             Object.keys(data).forEach(asset => {
               const price = Number(data[asset]);
               if (!Number.isFinite(price)) return;
-              const arr = (next[asset]||[]).slice();
+              const arr = (next[asset] || []).slice();
               arr.push(price);
               while (arr.length > BUFFER_LEN) arr.shift();
               next[asset] = arr;
@@ -217,10 +241,8 @@ export default function ServicesPage() {
     } catch (err) {
       console.warn("Failed to open WS:", err);
     }
-    return () => { try { if (ws && ws.readyState === WebSocket.OPEN) ws.close(); } catch(e){} };
+    return () => { try { if (ws && ws.readyState === WebSocket.OPEN) ws.close(); } catch(e) {} };
   }, [assets]);
-
-  const renderServices = useMemo(()=> (filtered.slice(0,6)), [filtered]);
 
   return (
     <section className={styles.page}>
@@ -228,13 +250,13 @@ export default function ServicesPage() {
         <h1 className={styles.title}>Our Services</h1>
         <p className={styles.lead}>High-performance Web, Software, Blockchain, and Web3 solutions for startups and enterprises.</p>
         <div className={styles.ctaRow}>
-          <a className={styles.cta} href="https://teams.live.com/l/invite/FEAQ_SAnU1l-eZ7kwI?v=g1" target="_blank" rel="noreferrer">Book Meeting on Microsoft Teams</a>
+          <a className={styles.cta} href="https://teams.live.com/l/invite/FEAQ_SAnU1l-eZ7kwI?v=g1" target="_blank" rel="noopener noreferrer">Book Meeting on Microsoft Teams</a>
           <label className={styles.toggle}><input type="checkbox" defaultChecked /> <span>Live WS Mode</span></label>
         </div>
       </motion.header>
 
       <div className={styles.canvasWrap}>
-        <Canvas shadows dpr={[1,1.6]} camera={{ position: [0,1.55,6.4], fov: 32 }}>
+        <Canvas shadows dpr={[1, 1.6]} camera={{ position: [0, 1.55, 6.4], fov: 32 }}>
           <EffectComposer multisampling={4}>
             <DepthOfField focusDistance={0.02} focalLength={0.18} bokehScale={6} />
             <Bloom luminanceThreshold={0.2} intensity={0.9} mipmapBlur radius={0.8} />
@@ -248,12 +270,12 @@ export default function ServicesPage() {
 
         <div className={styles.overlay}>
           <div className={styles.filterRow}>
-            <button className={filter==="all"?styles.filterBtnActive:styles.filterBtn} onClick={()=>setFilter("all")}>All</button>
-            <button className={filter==="web"?styles.filterBtnActive:styles.filterBtn} onClick={()=>setFilter("web")}>Web</button>
-            <button className={filter==="blockchain"?styles.filterBtnActive:styles.filterBtn} onClick={()=>setFilter("blockchain")}>Blockchain</button>
-            <button className={filter==="software"?styles.filterBtnActive:styles.filterBtn} onClick={()=>setFilter("software")}>Software</button>
-            <button className={filter==="security"?styles.filterBtnActive:styles.filterBtn} onClick={()=>setFilter("security")}>Security</button>
-            <button className={filter==="ecom"?styles.filterBtnActive:styles.filterBtn} onClick={()=>setFilter("ecom")}>E-Commerce</button>
+            <button className={filter === "all" ? styles.filterBtnActive : styles.filterBtn} onClick={() => setFilter("all")}>All</button>
+            <button className={filter === "web" ? styles.filterBtnActive : styles.filterBtn} onClick={() => setFilter("web")}>Web</button>
+            <button className={filter === "blockchain" ? styles.filterBtnActive : styles.filterBtn} onClick={() => setFilter("blockchain")}>Blockchain</button>
+            <button className={filter === "software" ? styles.filterBtnActive : styles.filterBtn} onClick={() => setFilter("software")}>Software</button>
+            <button className={filter === "security" ? styles.filterBtnActive : styles.filterBtn} onClick={() => setFilter("security")}>Security</button>
+            <button className={filter === "ecom" ? styles.filterBtnActive : styles.filterBtn} onClick={() => setFilter("ecom")}>E-Commerce</button>
           </div>
 
           <div className={styles.techStrip}>
@@ -270,7 +292,14 @@ export default function ServicesPage() {
         <div className={styles.grid}>
           {SERVICES.map((s) => (
             <article key={s.key} className={styles.card}>
-              <img src={s.logo} alt={`${s.title} logo`} className={styles.cardLogo} />
+              <Image 
+                src={s.logo} 
+                alt={`${s.title} logo`} 
+                className={styles.cardLogo} 
+                width={200} 
+                height={120} 
+                unoptimized
+              />
               <h3 className={styles.cardTitle}>{s.title}</h3>
               <p className={styles.cardDesc}>{s.desc}</p>
               <div className={styles.techList}>{s.tech.map(t => <span key={t} className={styles.tech}>{t}</span>)}</div>
