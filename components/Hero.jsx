@@ -37,29 +37,43 @@ const COIN_IDS = [
   "aave", "ethereum-classic", "polygon"
 ];
 
+// ✅ FIX 1: Static sample data (no Math.random during render)
+const SAMPLE_SPARKLINE = [45, 48, 52, 49, 55, 58, 62, 60, 65, 68, 72, 70, 75, 78, 82, 85, 88, 86, 90, 92, 95, 98, 96, 100, 102, 105, 108, 110, 112, 115];
+
+// Fallback data in case API fails
+const FALLBACK_COINS = [
+  { id: "bitcoin", symbol: "btc", name: "Bitcoin", current_price: 65000, price_change_percentage_24h: 2.5, image: "/logos/placeholder.png", sparkline_in_7d: { price: SAMPLE_SPARKLINE } },
+  { id: "ethereum", symbol: "eth", name: "Ethereum", current_price: 3500, price_change_percentage_24h: 1.8, image: "/logos/placeholder.png", sparkline_in_7d: { price: SAMPLE_SPARKLINE } },
+  { id: "solana", symbol: "sol", name: "Solana", current_price: 180, price_change_percentage_24h: -1.2, image: "/logos/placeholder.png", sparkline_in_7d: { price: SAMPLE_SPARKLINE } },
+  { id: "binancecoin", symbol: "bnb", name: "BNB", current_price: 580, price_change_percentage_24h: 0.5, image: "/logos/placeholder.png", sparkline_in_7d: { price: SAMPLE_SPARKLINE } },
+  { id: "ripple", symbol: "xrp", name: "XRP", current_price: 0.52, price_change_percentage_24h: -0.8, image: "/logos/placeholder.png", sparkline_in_7d: { price: SAMPLE_SPARKLINE } },
+  { id: "dogecoin", symbol: "doge", name: "Dogecoin", current_price: 0.12, price_change_percentage_24h: 3.2, image: "/logos/placeholder.png", sparkline_in_7d: { price: SAMPLE_SPARKLINE } }
+];
+
 /* ----------------------------------------------------
    Spark Hybrid (neon line + glow + pulse bars)
 ---------------------------------------------------- */
 function SparkHybrid({ data = [], width = 140, height = 36, color = "rgba(52,199,89,1)" }) {
-  if (!data || data.length < 2) return null;
-
+  // Use provided data or fallback to static sample data
+  const sparkData = data.length >= 2 ? data : SAMPLE_SPARKLINE;
+  
   const pad = 4;
   const w = width - pad * 2;
   const h = height - pad * 2;
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+  const min = Math.min(...sparkData);
+  const max = Math.max(...sparkData);
   const range = max - min || 1;
-  const up = data[data.length - 1] >= data[0];
+  const up = sparkData[sparkData.length - 1] >= sparkData[0];
 
-  const points = data
+  const points = sparkData
     .map((v, i) => {
-      const x = pad + (i / (data.length - 1)) * w;
+      const x = pad + (i / (sparkData.length - 1)) * w;
       const y = pad + h - ((v - min) / range) * h;
       return `${x},${y}`;
     })
     .join(" ");
 
-  const bars = data.slice(-24);
+  const bars = sparkData.slice(-24);
   const barWidth = Math.max(2, Math.floor(w / bars.length / 1.6));
 
   return (
@@ -70,16 +84,13 @@ function SparkHybrid({ data = [], width = 140, height = 36, color = "rgba(52,199
           <stop offset="100%" stopColor={color} stopOpacity="0.03" />
         </linearGradient>
       </defs>
-
-      {/* AREA */}
       <polygon points={`${points} ${pad + w},${pad + h} ${pad},${pad + h}`} fill="url(#area)" />
-
-      {/* LINE */}
       <polyline fill="none" stroke={color} strokeWidth="1.7" strokeLinecap="round" points={points} />
-
-      {/* BARS */}
       {bars.map((v, i) => {
-        const bh = ((v - Math.min(...bars)) / (Math.max(...bars) - Math.min(...bars) || 1)) * (h - 6);
+        const barMin = Math.min(...bars);
+        const barMax = Math.max(...bars);
+        const barRange = barMax - barMin || 1;
+        const bh = ((v - barMin) / barRange) * (h - 6);
         return (
           <rect
             key={i}
@@ -89,13 +100,10 @@ function SparkHybrid({ data = [], width = 140, height = 36, color = "rgba(52,199
             height={bh}
             rx={2}
             fill={up ? "rgba(52,199,89,1)" : "rgba(255,59,48,1)"}
-            style={{
-              animation: `pulseBar 1.6s ${i * 36}ms infinite`,
-            }}
+            style={{ animation: `pulseBar 1.6s ${i * 36}ms infinite` }}
           />
         );
       })}
-
       <style>{`
         @keyframes pulseBar {
           0% {opacity:1; transform:scaleY(1);}
@@ -113,189 +121,100 @@ function SparkHybrid({ data = [], width = 140, height = 36, color = "rgba(52,199
 export default function Hero() {
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // WebSocket live mode toggle
+  const [error, setError] = useState(false);
   const [wsLive, setWsLive] = useState(false);
   const wsRef = useRef(null);
 
   /* ----------------------------------------------------
-     Fetch function - uses proxy /api/crypto if available,
-     falls back to CoinGecko
+     Fetch function using local API endpoint
   ---------------------------------------------------- */
   const fetchCoinsREST = useCallback(async () => {
-    // Try local proxy first (recommended)
-    const proxyUrl = "/api/crypto";
-
     try {
-      const r = await fetch(proxyUrl, { cache: "no-store" });
-      if (r.ok) {
-        const json = await r.json();
-        if (Array.isArray(json) && json.length) return json;
+      const response = await fetch("/api/crypto", {
+        cache: "no-store"
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
       }
-    } catch (e) {
-      // proxy failed -> fallback
+      
+      const data = await response.json();
+      
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
+      }
+      throw new Error("No data received");
+    } catch (error) {
+      console.warn("Local API fetch failed:", error);
+      return FALLBACK_COINS;
     }
-
-    // fallback to CoinGecko directly (may run into rate limits on localhost)
-    try {
-      const url =
-        "https://api.coingecko.com/api/v3/coins/markets" +
-        "?vs_currency=usd" +
-        "&ids=" + COIN_IDS.join(",") +
-        "&order=market_cap_desc&sparkline=true&price_change_percentage=24h";
-
-      const r2 = await fetch(url, { cache: "no-store" });
-      const j2 = await r2.json();
-      if (Array.isArray(j2)) return j2;
-    } catch (e) {
-      console.warn("CoinGecko fetch failed:", e);
-    }
-
-    // final fallback: empty
-    return [];
   }, []);
 
   /* ----------------------------------------------------
-     Initialize / Poll REST (for initial load, and when WS disabled)
+     Initialize and refresh data
   ---------------------------------------------------- */
   useEffect(() => {
     let mounted = true;
-    let iv;
+    let intervalId;
 
-    async function loadOnceAndRepeat() {
-      setLoading(true);
-      const arr = await fetchCoinsREST();
-
-      const ordered = COIN_IDS.map((id) =>
-        arr.find(c => c.id === id || (c.symbol && c.symbol.toLowerCase() === id))
-      ).filter(Boolean);
-
+    async function loadData() {
       if (!mounted) return;
-      setCoins(ordered);
+      
+      setLoading(true);
+      setError(false);
+      
+      const data = await fetchCoinsREST();
+      
+      if (!mounted) return;
+      
+      if (data && data.length > 0) {
+        const ordered = COIN_IDS.map(id => data.find(c => c.id === id)).filter(Boolean);
+        setCoins(ordered.length > 0 ? ordered : data.slice(0, 12));
+        setError(false);
+      } else {
+        setError(true);
+        setCoins(FALLBACK_COINS);
+      }
+      
       setLoading(false);
     }
 
-    loadOnceAndRepeat();
-    iv = setInterval(() => {
-      if (!wsLive) loadOnceAndRepeat(); // only poll while websocket not enabled
-    }, 15000);
-
-    return () => { mounted = false; clearInterval(iv); };
-  }, [wsLive, fetchCoinsREST]);
-
-  /* ----------------------------------------------------
-     Start / stop Binance WebSocket subscription
-  ---------------------------------------------------- */
-  useEffect(() => {
-    if (!wsLive) {
-      if (wsRef.current) {
-        try { wsRef.current.close(); } catch (_) {}
-        wsRef.current = null;
+    loadData();
+    
+    intervalId = setInterval(() => {
+      if (!wsLive) {
+        loadData();
       }
-      return;
-    }
-
-    const subscribeSymbols = [];
-    const candidates = coins.length ? coins : COIN_IDS.map(id => ({ id }));
-
-    candidates.forEach((c) => {
-      const id = c.id;
-      const sym = (SYMBOL_MAP[id] || (c.symbol || "").toUpperCase()).toUpperCase();
-      const pair = BINANCE_MAP[sym];
-      if (pair && !subscribeSymbols.includes(pair)) subscribeSymbols.push(pair);
-    });
-
-    if (!subscribeSymbols.length) {
-      subscribeSymbols.push("btcusdt", "ethusdt", "bnbusdt");
-    }
-
-    const wsUrl = "wss://stream.binance.com:9443/ws";
-    const ws = new WebSocket(wsUrl);
-    wsRef.current = ws;
-
-    ws.onopen = () => {
-      const params = subscribeSymbols.map((s) => `${s}@miniTicker`);
-      const msg = {
-        method: "SUBSCRIBE",
-        params,
-        id: 1,
-      };
-      ws.send(JSON.stringify(msg));
-    };
-
-    ws.onmessage = (ev) => {
-      try {
-        const payload = JSON.parse(ev.data);
-        if (payload && payload.e && (payload.e === "24hrMiniTicker" || payload.e === "24hrTicker")) {
-          const pair = (payload.s || "").toLowerCase();
-          const last = Number(payload.c);
-          const open = Number(payload.o);
-          const changePct = open ? ((last - open) / open) * 100 : 0;
-
-          setCoins(prev => {
-            const copy = prev.map(item => ({ ...item }));
-            for (let i = 0; i < copy.length; i++) {
-              const id = copy[i].id;
-              const sym = (SYMBOL_MAP[id] || (copy[i].symbol || "").toUpperCase()).toUpperCase();
-              const mapped = BINANCE_MAP[sym];
-              if (mapped && mapped.toLowerCase() === pair) {
-                copy[i].price = last;
-                copy[i].current_price = last;
-                copy[i].change24h = changePct;
-                copy[i].price_change_percentage_24h = changePct;
-                break;
-              }
-            }
-            return copy;
-          });
-        }
-      } catch (e) {}
-    };
-
-    ws.onerror = (err) => {
-      console.warn("WS error:", err);
-    };
-
-    ws.onclose = () => {
-      wsRef.current = null;
-      if (wsLive) {
-        setTimeout(() => {
-          if (wsRef.current === null) setWsLive(false);
-        }, 3000);
-      }
-    };
+    }, 30000);
 
     return () => {
-      try { ws.close(); } catch (_) {}
-      wsRef.current = null;
+      mounted = false;
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [wsLive, coins.length, coins]);
+  }, [fetchCoinsREST, wsLive]);
 
   /* ----------------------------------------------------
-     Helper: pick image
+     Helper functions
   ---------------------------------------------------- */
   function getCoinLogo(c) {
-    if (!c) return "";
-    return c.image || c.icon || c.logo || `https://assets.coingecko.com/coins/images/1/large/bitcoin.png`;
+    if (!c) return "/logos/placeholder.png";
+    return c.image || c.icon || c.logo || "/logos/placeholder.png";
   }
 
-  /* ----------------------------------------------------
-     Split into rows for multi-row ticker
-  ---------------------------------------------------- */
+  function formatPrice(c) {
+    const price = c.current_price || c.price || 0;
+    if (price === 0) return "$--";
+    return `$${Number(price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  }
+
+  function getPriceChange(c) {
+    const change = c.price_change_percentage_24h || c.change24h || 0;
+    return change;
+  }
+
   const row1 = coins.slice(0, 10);
   const row2 = coins.slice(10, 20);
 
-  /* ----------------------------------------------------
-     Helper: readable price
-  ---------------------------------------------------- */
-  function formatPrice(c) {
-    const price = (c.current_price ?? c.price ?? c.market_cap ?? c.last_price ?? c.current) || 0;
-    try { return `$${Number(price).toLocaleString()}`; } catch { return `--`; }
-  }
-
-  /* ----------------------------------------------------
-     UI
-  ---------------------------------------------------- */
   return (
     <section className={styles.hero}>
       <div className={styles.grid}></div>
@@ -333,77 +252,97 @@ export default function Hero() {
           <a className={styles.heroBtn} href="https://teams.live.com/l/invite/FEAQ_SAnU1l-eZ7kwI?v=g1" target="_blank" rel="noopener noreferrer">
             Book a Meeting
           </a>
-
-          <button
-            className={`${styles.heroBtn} ${wsLive ? styles.wsOn : styles.wsOff}`}
-            onClick={() => setWsLive(v => !v)}
-          >
+          <button className={`${styles.heroBtn} ${wsLive ? styles.wsOn : styles.wsOff}`} onClick={() => setWsLive(v => !v)}>
             {wsLive ? "Live WS Mode: ON" : "Live WS Mode: OFF"}
           </button>
         </div>
       </motion.div>
 
-      {/* MULTI-ROW TICKER */}
+      {/* Crypto Ticker */}
       <div className={styles.multiTicker}>
-        {/* ROW 1 → left scroll */}
-        <div className={`${styles.row} ${styles.rowLeft}`}>
-          {(!row1.length ? new Array(6).fill({id:"loading"}).map((_,i)=>({id:`loading-${i}`})) : [...row1, ...row1]).map((c, i) => {
-            const sym = SYMBOL_MAP[c.id] || (c.symbol || "").toUpperCase() || "??";
-            const up = Number(c.price_change_percentage_24h ?? c.change24h ?? 0) >= 0;
-            const spark = c.sparkline_in_7d?.price || c.sparkline || [];
-            return (
-              <div key={`r1-${i}`} className={styles.tickerItem}>
-                <div className={styles.symbolRow}>
-                  <div className={styles.coinHolo}>
-                    <Image src={getCoinLogo(c)} alt={sym} className={styles.coinImg} width={40} height={40} />
+        {loading ? (
+          <div className={styles.loadingTicker}>Loading market data...</div>
+        ) : error ? (
+          <div className={styles.errorTicker}>Market data temporarily unavailable</div>
+        ) : (
+          <>
+            {/* ROW 1 */}
+            <div className={`${styles.row} ${styles.rowLeft}`}>
+              {row1.map((c, i) => {
+                const sym = SYMBOL_MAP[c.id] || (c.symbol || "").toUpperCase() || "???";
+                const change = getPriceChange(c);
+                const up = change >= 0;
+                const spark = c.sparkline_in_7d?.price || [];
+                
+                return (
+                  <div key={`r1-${c.id}-${i}`} className={styles.tickerItem}>
+                    <div className={styles.symbolRow}>
+                      <div className={styles.coinHolo}>
+                        {/* ✅ FIX 2: Use Next.js Image component with unoptimized for external URLs */}
+                        <Image 
+                          src={getCoinLogo(c)} 
+                          alt={sym} 
+                          className={styles.coinImg} 
+                          width={40} 
+                          height={40}
+                          unoptimized
+                        />
+                      </div>
+                      <div className={styles.symbol}>{sym}</div>
+                    </div>
+                    <div className={styles.price}>
+                      {formatPrice(c)}
+                      <span className={up ? styles.up : styles.down}>
+                        {up ? "▲" : "▼"} {Math.abs(change).toFixed(2)}%
+                      </span>
+                    </div>
+                    <div className={styles.sparkWrap}>
+                      <SparkHybrid data={spark.slice(-32)} color={up ? "rgba(52,199,89,1)" : "rgba(255,59,48,1)"} width={120} height={36} />
+                    </div>
                   </div>
-                  <div className={styles.symbol}>{sym}</div>
-                </div>
+                );
+              })}
+            </div>
 
-                <div className={styles.price}>
-                  {formatPrice(c)}
-                  <span className={up ? styles.up : styles.down}>
-                    {up ? "▲" : "▼"} {Math.abs(Number(c.price_change_percentage_24h ?? c.change24h ?? 0)).toFixed(2)}%
-                  </span>
-                </div>
-
-                <div className={styles.sparkWrap}>
-                  <SparkHybrid data={spark.slice(-32)} color={up ? "rgba(52,199,89,1)" : "rgba(255,59,48,1)"} width={120} height={36} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* ROW 2 → right scroll */}
-        <div className={`${styles.row} ${styles.rowRight}`}>
-          {(!row2.length ? new Array(6).fill({id:"loading"}).map((_,i)=>({id:`loading2-${i}`})) : [...row2, ...row2]).map((c, i) => {
-            const sym = SYMBOL_MAP[c.id] || (c.symbol || "").toUpperCase() || "??";
-            const up = Number(c.price_change_percentage_24h ?? c.change24h ?? 0) >= 0;
-            const spark = c.sparkline_in_7d?.price || c.sparkline || [];
-            return (
-              <div key={`r2-${i}`} className={styles.tickerItem}>
-                <div className={styles.symbolRow}>
-                  <div className={styles.coinHolo}>
-                    <Image src={getCoinLogo(c)} alt={sym} className={styles.coinImg} width={40} height={40} />
+            {/* ROW 2 */}
+            <div className={`${styles.row} ${styles.rowRight}`}>
+              {row2.map((c, i) => {
+                const sym = SYMBOL_MAP[c.id] || (c.symbol || "").toUpperCase() || "???";
+                const change = getPriceChange(c);
+                const up = change >= 0;
+                const spark = c.sparkline_in_7d?.price || [];
+                
+                return (
+                  <div key={`r2-${c.id}-${i}`} className={styles.tickerItem}>
+                    <div className={styles.symbolRow}>
+                      <div className={styles.coinHolo}>
+                        {/* ✅ FIX 2: Use Next.js Image component with unoptimized for external URLs */}
+                        <Image 
+                          src={getCoinLogo(c)} 
+                          alt={sym} 
+                          className={styles.coinImg} 
+                          width={40} 
+                          height={40}
+                          unoptimized
+                        />
+                      </div>
+                      <div className={styles.symbol}>{sym}</div>
+                    </div>
+                    <div className={styles.price}>
+                      {formatPrice(c)}
+                      <span className={up ? styles.up : styles.down}>
+                        {up ? "▲" : "▼"} {Math.abs(change).toFixed(2)}%
+                      </span>
+                    </div>
+                    <div className={styles.sparkWrap}>
+                      <SparkHybrid data={spark.slice(-32)} color={up ? "rgba(52,199,89,1)" : "rgba(255,59,48,1)"} width={120} height={36} />
+                    </div>
                   </div>
-                  <div className={styles.symbol}>{sym}</div>
-                </div>
-
-                <div className={styles.price}>
-                  {formatPrice(c)}
-                  <span className={up ? styles.up : styles.down}>
-                    {up ? "▲" : "▼"} {Math.abs(Number(c.price_change_percentage_24h ?? c.change24h ?? 0)).toFixed(2)}%
-                  </span>
-                </div>
-
-                <div className={styles.sparkWrap}>
-                  <SparkHybrid data={spark.slice(-32)} color={up ? "rgba(52,199,89,1)" : "rgba(255,59,48,1)"} width={120} height={36} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

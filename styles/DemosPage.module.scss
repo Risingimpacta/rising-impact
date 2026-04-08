@@ -10,18 +10,26 @@
 }
 
 /* NEON STRIPS */
-.neonStrip {
-  @include neon-strip(52px);
-  margin: 1.5rem auto;
+/* ================================
+   NEON STRIP (top & bottom) - MATCHING OTHER SECTIONS
+   ================================ */
+.neonStrip,
+.neonStripBottom {
+  @include neon-strip(48px);
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
   text-align: center;
   font-weight: 900;
-  letter-spacing: 8px;
-  color: #fff;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: #000;
   position: relative;
   overflow: hidden;
-  z-index: 10;
-  max-width: 500px;
-  
+  border-radius: 12px;
+  z-index: 40;
+
+  /* Extra hologram beam (reinforced) */
   &::after {
     content: "";
     position: absolute;
@@ -32,19 +40,24 @@
     background: linear-gradient(
       120deg,
       transparent 0%,
-      rgba(255,255,255,0.65) 50%,
+      rgba(255,255,255,0.55) 50%,
       transparent 100%
     );
-    filter: blur(20px);
-    opacity: 0.6;
-    animation: sweep 6s infinite linear;
+    filter: blur(14px);
+    opacity: 0.45;
+    animation: sweep 4.6s infinite ease-in-out;
   }
 }
 
+.neonStripBottom {
+  margin-top: 2rem;
+  font-size: 0.8rem;
+}
+
 @keyframes sweep {
-  0% { left: -120%; }
-  50% { left: 160%; }
-  100% { left: -120%; }
+  0%   { left: -130%; }
+  55%  { left: 150%; }
+  100% { left: -130%; }
 }
 
 /* HERO SECTION */
@@ -56,36 +69,55 @@
 }
 
 .title {
-  font-size: 3.5rem;
+  font-size: 2.2rem;
   font-weight: 800;
-  margin-bottom: 1.5rem;
-  line-height: 1.1;
+  line-height: 1.2;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.3px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
   
-  @media (max-width: 768px) {
-    font-size: 2.5rem;
-  }
-}
-
-.gradientText {
-  background: linear-gradient(90deg, #FF7A00, #0084FF, #9D4EDD);
+  /* Neon gradient text effect */
+  background: linear-gradient(135deg, #FF7A00, #FF3B30, #0084FF, #9D4EDD);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  background-size: 200% auto;
-  animation: gradientShift 3s ease-in-out infinite;
+  background-size: 300% auto;
+  animation: titleGradient 4s ease infinite;
+
+  @media (max-width: 1100px) {
+    font-size: 1.8rem;
+  }
+  @media (max-width: 760px) {
+    font-size: 1.5rem;
+  }
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% center; }
-  50% { background-position: 100% center; }
+@keyframes titleGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .subtitle {
-  font-size: 1.3rem;
-  color: #9fb0c8;
-  line-height: 1.6;
-  max-width: 600px;
-  margin: 0 auto;
+   margin: 0.5rem auto 0;
+  font-size: 0.95rem;
+  color: rgba(159, 176, 200, 0.95);
+  max-width: 700px;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  line-height: 1.5;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-shadow: 0 0 15px rgba(0, 132, 255, 0.2);
+
+
+  @media (max-width: 760px) {
+    font-size: 0.85rem;
+    padding: 0 1rem;
+  }
 }
 
 /* FEATURED SECTION */
