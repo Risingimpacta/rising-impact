@@ -1,0 +1,21 @@
+{
+  "name": "Rising Impact",
+  "short_name": "Rising Impact",
+  "description": "Web3 • Blockchain • Digital Solutions",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05030A",
+  "theme_color": "#FF7A00",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
