@@ -12,14 +12,14 @@ const DEMOS = [
     desc: "Next-gen decentralized finance ecosystem with staking, charts and simulation.",
     image: "/risingstar.png",
     yt: "WHFtpe8HTl4",
-    demoUrl: "https://risingsstardex.risingimpact.in/",
+    demoUrl: "https://superb-rising-star.netlify.app/",
   },
   {
     title: "Simba Dex",
     desc: "A Jungle-themed DEX with swap engine, liquidity pools and smooth animations.",
     image: "/simbadex.png",
     yt: "jt9JDMvMiDo",
-    demoUrl: "https://simbadex.risingimpact.in/",
+    demoUrl: "https://simbadex.netlify.app/",
   },
   {
     title: "Royal Things — E-Commerce",
