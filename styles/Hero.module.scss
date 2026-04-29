@@ -3,15 +3,19 @@
 
 .hero {
   position: relative;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   background: radial-gradient(circle at 40% 20%, rgba(var(--neon-a),0.25), transparent 60%),
               linear-gradient(180deg, #05030A, #07091A 60%, #05030A);
 
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding-bottom: 120px;
+  padding-top: 80px; /* Add this - pushes everything down */
 }
 
 /* -------------------------
@@ -27,6 +31,7 @@
   opacity: 0.08;
   animation: drift var(--drift-speed) linear infinite;
   z-index: 1;
+  pointer-events: none;
 }
 
 /* -------------------------
@@ -48,6 +53,7 @@
     transparent 70%
   );
   z-index: 2;
+  pointer-events: none;
 }
 
 /* -------------------------
@@ -73,6 +79,7 @@
   animation: spinRays 18s linear infinite;
   mix-blend-mode: screen;
   z-index: 2;
+  pointer-events: none;
 }
 
 @keyframes spinRays {
@@ -89,7 +96,6 @@
   left: -40%;
   width: 180%;
   height: 220px;
-
   background: linear-gradient(
     90deg,
     transparent,
@@ -97,14 +103,11 @@
     rgba(var(--neon-b), 0.55),
     transparent
   );
-
   opacity: 0.35;
   transform: translateY(-50%) rotate(-12deg);
-
   filter: blur(48px);
   mix-blend-mode: screen;
   pointer-events: none;
-
   animation: beamSweep 12s var(--ease-soft) infinite;
   z-index: 3;
 }
@@ -235,22 +238,22 @@
   text-align: center;
   @include container;
   max-width: 900px;
+  margin-bottom: 50px;
+  margin-top: 80px; /* Add this - pushes content down */
 }
 
 .title {
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 800;
-  line-height: 1.05;
+  line-height: 1.2; /* Slightly increased */
   color: #fff;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem; /* Increased from 1.2rem */
 
   span {
     @include gradient-text(rgba(var(--neon-a),1), rgba(var(--neon-b),1));
   }
 }
 
-
-/* RPG TAGLINE */
 .tagline {
   font-size: 1.25rem;
   font-weight: 700;
@@ -258,7 +261,6 @@
   margin-bottom: 1.4rem;
   text-transform: uppercase;
   letter-spacing: 1.6px;
-
   background: linear-gradient(90deg,
     #FF7A00,
     #FF3B30,
@@ -266,12 +268,10 @@
     #0084FF,
     #9D4EDD
   );
-
   background-size: 400% 400%;
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-
   animation:
     rpgGlow 6s ease-in-out infinite,
     blink 2.3s ease-in-out infinite;
@@ -298,87 +298,142 @@
   margin-inline: auto;
 }
 
-.cta {
-  display: inline-block;
-  margin-top: 1.8rem;
+/* ----------------------------------------------------
+   HERO BUTTON GROUP - FIXED SPACING
+---------------------------------------------------- */
+.buttonRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.heroBtn {
   padding: 0.9rem 2rem;
-
   border-radius: var(--radius);
-  background: linear-gradient(
-    90deg,
-    rgba(var(--neon-a),1),
-    rgba(var(--neon-b),1)
-  );
-
-  color: #000;
   font-weight: 700;
-  transition: transform 0.3s var(--ease-pop);
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  color: #000;
+  background: linear-gradient(90deg, rgba(var(--neon-a),1), rgba(var(--neon-b),1));
+  box-shadow: 0 0 16px rgba(var(--neon-a),0.4);
+  transition: transform 0.3s var(--ease-pop), box-shadow 0.3s;
+  min-width: 220px;
 
   &:hover {
-    transform: translateY(-4px) scale(1.04);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 0 28px rgba(var(--neon-a),0.8);
   }
 }
 
-/* -------------------------
-   TICKER
--------------------------- */
-/* ---------------------
-   TICKER WITH SPARKLINES
-   (add or replace existing .ticker rules)
-   --------------------- */
+.wsOn {
+  background: linear-gradient(90deg, #22c55e, #06b6d4);
+  box-shadow: 0 0 16px rgba(34,197,94,0.45);
+  color: #fff;
+}
 
-.ticker {
-  position: absolute;
-  bottom: 0;
+.wsOff {
+  background: linear-gradient(90deg, #ff6b6b, #ff3b3b);
+  box-shadow: 0 0 16px rgba(255,59,48,0.45);
+  color: #fff;
+}
+
+/* ---------------------------------------
+   MULTI-ROW TICKER - FIXED POSITION
+----------------------------------------*/
+.multiTicker {
+  position: relative; /* Changed from absolute */
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  backdrop-filter: blur(8px);
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding: 0.6rem 0;
-  z-index: 60;
-}
-
-.tickerTrack {
+  padding: 0.8rem 0;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 20px;
+  z-index: 90;
   display: flex;
-  gap: 1.2rem;
-  width: max-content;
-  align-items: center;
-  white-space: nowrap;
-  padding-left: 6rem; /* initial offset */
-  animation: tickerScroll 35s linear infinite;
+  flex-direction: column;
+  gap: 0.55rem;
 }
 
-/* Individual ticker item (coin + sparkline) */
+.row {
+  display: flex;
+  gap: 1.4rem;
+  width: max-content;
+  white-space: nowrap;
+  align-items: center;
+}
+
+.rowLeft {
+  animation: tickerLeft 34s linear infinite;
+}
+
+@keyframes tickerLeft {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.rowRight {
+  animation: tickerRight 38s linear infinite;
+}
+
+@keyframes tickerRight {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
 .tickerItem {
   display: inline-flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.3rem 0.8rem;
-  background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+  gap: 0.9rem;
+  padding: 0.35rem 0.8rem;
+  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
   border-radius: 10px;
+  min-width: 190px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.45);
-  min-width: 170px;
 }
 
-/* Left block (symbol + price) */
-.tickerLeft {
+.symbolRow {
   display: flex;
-  flex-direction: column;
-  min-width: 90px;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.coinHolo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.04);
+  box-shadow: 0 0 12px rgba(var(--neon-a),0.15);
+  overflow: hidden;
+  transform-style: preserve-3d;
+}
+
+.coinImg {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  transform: translateZ(8px);
 }
 
 .symbol {
   font-weight: 800;
-  font-size: 0.82rem;
-  color: #ffffff;
-  letter-spacing: 0.6px;
+  font-size: 0.86rem;
+  color: #fff;
 }
 
 .price {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--muted);
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .up {
@@ -393,57 +448,12 @@
   font-weight: 700;
 }
 
-/* sparkline wrapper */
 .sparkWrap {
+  width: 130px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
-.sparkBar {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 26px;
-}
-
-.sparkBarItem {
-  width: 4px;
-  border-radius: 2px;
-  transition: height 0.3s ease;
-}
-
-
-/* svg tweaks for neon look */
-.sparkSvg {
-  display: block;
-  filter: drop-shadow(0 2px 6px rgba(255,122,0,0.06));
-}
-
-/* ticker animation */
-@keyframes tickerScroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
-}
-
-/* responsive */
-@media (max-width: 900px) {
-  .tickerItem { min-width: 140px; padding: 0.3rem 0.6rem; }
-  .sparkWrap { display: none; } /* hide sparklines on small screens for performance */
-}
-
-
-.tickerTrack span {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-  text-shadow: 0 0 6px rgba(255,122,0,0.4);
-}
-
-/* -----------------------------
-   SparkHybrid + coin hologram
-   Paste/append into Hero.module.scss
-------------------------------*/
 
 .sparkSvg {
   display: block;
@@ -452,255 +462,26 @@
   will-change: transform, opacity;
 }
 
-/* pulse bar animation already embedded inline, but base style: */
-@keyframes pulseBar {
-  0% { transform: translateY(0) scaleY(1); opacity: 1; }
-  50% { transform: translateY(-2px) scaleY(1.05); opacity: 0.85; }
-  100% { transform: translateY(0) scaleY(1); opacity: 1; }
-}
-
-/* ticker coin + holo */
-.tickerItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.9rem;
-  padding: 0.35rem 0.8rem;
-  background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.00));
-  border-radius: 10px;
-  min-width: 190px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
-}
-
-.tickerLeft {
-  display: flex;
-  flex-direction: column;
-  min-width: 110px;
-}
-
-/* symbol row: holo icon + symbol text */
-.symbolRow {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-}
-
-/* hologram coin wrapper */
-.coinHolo {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  position: relative;
-  display: inline-grid;
-  place-items: center;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0));
-  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
-  overflow: visible;
-  transform: translateZ(0);
-}
-
-/* actual img */
-.coinImg {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  object-fit: cover;
-  display: block;
-  transform: translateZ(10px); /* make it sit above pseudo layers */
-}
-
-/* hologram sheen (pseudo layers using explicit element) */
-.coinHolo::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08), transparent 30%);
-  mix-blend-mode: screen;
-  pointer-events: none;
-  transform: translateZ(20px);
-  transition: transform 0.45s ease;
-}
-
-/* 3D subtle tilt and floating */
-.coinHolo {
-  transform-origin: center;
-  animation: holoFloat 4.6s ease-in-out infinite;
-}
-
-@keyframes holoFloat {
-  0% { transform: translateY(0) rotateX(0) rotateY(0); }
-  50% { transform: translateY(-3px) rotateX(3deg) rotateY(-2deg); }
-  100% { transform: translateY(0) rotateX(0) rotateY(0); }
-}
-
-/* hologram overlay gradient line */
-.coinHolo::after {
-  content: "";
-  position: absolute;
-  left: -10%;
-  top: -30%;
-  width: 140%;
-  height: 160%;
-  border-radius: 50%;
-  background: linear-gradient(120deg, rgba(255,255,255,0.06), rgba(0,0,0,0) 40%, rgba(255,255,255,0.03) 70%);
-  transform: rotate(-18deg) translateZ(30px);
-  filter: blur(6px);
-  opacity: 0.85;
-  pointer-events: none;
-}
-
-/* price text */
-.price {
-  font-size: 0.88rem;
-  color: var(--muted);
-  margin-top: 4px;
-}
-
-/* symbol text */
-.symbol {
-  font-weight: 800;
-  font-size: 0.86rem;
-  color: #fff;
-}
-
-/* up/down */
-.up { color: #34c759; margin-left: 6px; font-weight: 700; }
-.down { color: #ff3b30; margin-left: 6px; font-weight: 700; }
-
-/* spark container */
-.sparkWrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 120px;
-}
-
-/* responsive tweaks */
+/* Responsive */
 @media (max-width: 900px) {
-  .sparkWrap { display: none; } /* conserve mobile perf */
+  .sparkWrap { display: none; }
   .tickerItem { min-width: 140px; padding: 0.3rem 0.6rem; }
-}
-
-/* ---------------------------------------
-   MULTI-ROW TICKER
-----------------------------------------*/
-.multiTicker {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  overflow: hidden;
-  padding: 0.8rem 0;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(10px);
-  border-top: 1px solid rgba(255,255,255,0.08);
-  z-index: 90;
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-}
-
-/* ROWS */
-.row {
-  display: flex;
-  gap: 1.4rem;
-  width: max-content;
-  white-space: nowrap;
-  align-items: center;
-}
-
-/* LEFT → RIGHT */
-.rowLeft {
-  animation: tickerLeft 34s linear infinite;
-}
-@keyframes tickerLeft {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* RIGHT → LEFT */
-.rowRight {
-  animation: tickerRight 38s linear infinite;
-}
-@keyframes tickerRight {
-  0%   { transform: translateX(-50%); }
-  100% { transform: translateX(0); }
-}
-
-/* hologram coin wrapper */
-.coinHolo {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  position: relative;
-  display: grid;
-  place-items: center;
-  background: rgba(255,255,255,0.04);
-  box-shadow: 0 0 12px rgba(var(--neon-a),0.15);
-  overflow: hidden;
-  transform-style: preserve-3d;
-}
-
-/* coin image */
-.coinImg {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  object-fit: cover;
-  transform: translateZ(8px);
-}
-
-/* spark container */
-.sparkWrap {
-  width: 130px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-/* ----------------------------------------------------
-   HERO BUTTON GROUP
----------------------------------------------------- */
-.buttonRow {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1.1rem;
-  margin-top: 2rem;
-}
-
-/* Base button style */
-.heroBtn {
-  padding: 0.95rem 2rem;
-  border-radius: var(--radius);
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  border: none;
-  color: #000;
-  background: linear-gradient(90deg, rgba(var(--neon-a),1), rgba(var(--neon-b),1));
-  box-shadow: 0 0 16px rgba(var(--neon-a),0.4);
-  transition: transform 0.3s var(--ease-pop), box-shadow 0.3s;
-
-  &:hover {
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 0 28px rgba(var(--neon-a),0.8);
+  .heroBtn { min-width: 180px; padding: 0.7rem 1.5rem; font-size: 0.9rem; }
+  .buttonRow { gap: 1rem; }
+  .inner { 
+    padding-top: 40px; 
+    margin-bottom: 30px; 
+    margin-top: 40px; /* Add this */
   }
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 220px; /* ensures equal width */
+  .hero { 
+    padding-bottom: 80px;
+    padding-top: 40px; /* Add this */
+  }
 }
 
-/* WebSocket button states */
-.wsOn {
-  background: linear-gradient(90deg, #22c55e, #06b6d4);
-  box-shadow: 0 0 16px rgba(34,197,94,0.45);
+@media (max-width: 600px) {
+  .buttonRow { flex-direction: column; gap: 0.8rem; }
+  .heroBtn { width: 100%; max-width: 280px; }
+  .inner { margin-top: 30px; } /* Add this */
+  .hero { padding-top: 30px; } /* Add this */
 }
-
-.wsOff {
-  background: linear-gradient(90deg, #ff6b6b, #ff3b3b);
-  box-shadow: 0 0 16px rgba(255,59,48,0.45);
-}
-
-
-
